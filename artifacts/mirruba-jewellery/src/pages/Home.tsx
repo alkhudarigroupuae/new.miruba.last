@@ -29,7 +29,7 @@ const HERO_IMAGE = "https://www.mirruba-jewellery.com/static/media/jewellery-gir
 
 function HeroSection() {
   return (
-    <section className="relative min-h-screen md:min-h-screen flex items-center justify-center overflow-hidden" data-testid="section-hero">
+    <section className="relative min-h-screen flex items-end pb-24 md:items-center md:pb-0 justify-center overflow-hidden" data-testid="section-hero">
       <img
         src={mobileBannerImg}
         alt=""
