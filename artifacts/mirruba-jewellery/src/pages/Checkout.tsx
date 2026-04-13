@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { ArrowLeft, Trash2, ShoppingBag, Minus, Plus, Send, Loader2, CheckCircle } from "lucide-react";
+import { ArrowLeft, Trash2, ShoppingBag, Minus, Plus, Send, Loader2, CheckCircle, CreditCard } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { formatPrice, getProductImage, getProductCategory } from "@/data/products";
 
@@ -8,11 +8,14 @@ export default function Checkout() {
   const { items, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
   const [step, setStep] = useState<"cart" | "details" | "success">("cart");
   const [sending, setSending] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"online" | "whatsapp">("online");
+  const [orderError, setOrderError] = useState("");
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
   const [notes, setNotes] = useState("");
 
   function handleProceed() {
@@ -21,7 +24,52 @@ export default function Checkout() {
     window.scrollTo(0, 0);
   }
 
-  function handlePlaceOrder() {
+  async function handlePayOnline() {
+    if (!name || !phone || !email) return;
+    setSending(true);
+    setOrderError("");
+
+    const nameParts = name.trim().split(" ");
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ") || "";
+
+    try {
+      const res = await fetch("/api/wc/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          billing: {
+            first_name: firstName,
+            last_name: lastName,
+            email,
+            phone,
+            address_1: address,
+            city: city || "Sharjah",
+          },
+          line_items: items.map((item) => ({
+            product_id: item.product.id,
+            quantity: item.quantity,
+          })),
+          customer_note: notes,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.checkout_url) {
+        clearCart();
+        window.location.href = data.checkout_url;
+      } else {
+        setOrderError(data.error || "Failed to create order. Please try again.");
+      }
+    } catch {
+      setOrderError("Connection error. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  function handleWhatsApp() {
     if (!name || !phone) return;
     setSending(true);
 
@@ -54,7 +102,15 @@ export default function Checkout() {
       setSending(false);
       setStep("success");
       clearCart();
-    }, 800);
+    }, 500);
+  }
+
+  function handlePlaceOrder() {
+    if (paymentMethod === "online") {
+      handlePayOnline();
+    } else {
+      handleWhatsApp();
+    }
   }
 
   if (step === "success") {
@@ -94,7 +150,7 @@ export default function Checkout() {
         </Link>
 
         <h1 className="font-serif text-3xl sm:text-4xl mb-4">
-          {step === "cart" ? "Your Bag" : "Delivery Details"}
+          {step === "cart" ? "Your Bag" : "Checkout"}
         </h1>
 
         {step === "details" && (
@@ -196,7 +252,7 @@ export default function Checkout() {
                   onClick={handleProceed}
                   className="w-full bg-gold text-white py-3.5 tracking-[0.1em] uppercase text-sm font-medium hover:bg-gold/90 transition-all rounded-lg flex items-center justify-center gap-2"
                 >
-                  Proceed to Order
+                  Proceed to Checkout
                 </button>
               </div>
             </div>
@@ -232,24 +288,39 @@ export default function Checkout() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">Email</label>
+                    <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">
+                      Email {paymentMethod === "online" ? "*" : ""}
+                    </label>
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="your@email.com"
+                      required={paymentMethod === "online"}
                       className="w-full px-4 py-3 bg-[#0f0d0c] border border-border/40 rounded-lg text-white placeholder:text-muted-foreground/30 focus:outline-none focus:border-gold transition-colors text-sm"
                     />
                   </div>
-                  <div>
-                    <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">Delivery Address</label>
-                    <input
-                      type="text"
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                      placeholder="Sharjah, UAE"
-                      className="w-full px-4 py-3 bg-[#0f0d0c] border border-border/40 rounded-lg text-white placeholder:text-muted-foreground/30 focus:outline-none focus:border-gold transition-colors text-sm"
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">City</label>
+                      <input
+                        type="text"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="Sharjah"
+                        className="w-full px-4 py-3 bg-[#0f0d0c] border border-border/40 rounded-lg text-white placeholder:text-muted-foreground/30 focus:outline-none focus:border-gold transition-colors text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">Address</label>
+                      <input
+                        type="text"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        placeholder="Street address"
+                        className="w-full px-4 py-3 bg-[#0f0d0c] border border-border/40 rounded-lg text-white placeholder:text-muted-foreground/30 focus:outline-none focus:border-gold transition-colors text-sm"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">Order Notes</label>
@@ -261,6 +332,63 @@ export default function Checkout() {
                       className="w-full px-4 py-3 bg-[#0f0d0c] border border-border/40 rounded-lg text-white placeholder:text-muted-foreground/30 focus:outline-none focus:border-gold transition-colors text-sm resize-none"
                     />
                   </div>
+                </div>
+              </div>
+
+              <div className="bg-[#1a1816] rounded-xl border border-border/30 p-5 sm:p-6">
+                <h3 className="font-serif text-lg mb-4">Payment Method</h3>
+                <div className="space-y-3">
+                  <label
+                    className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${
+                      paymentMethod === "online"
+                        ? "border-gold bg-gold/5"
+                        : "border-border/30 hover:border-border/60"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment"
+                      checked={paymentMethod === "online"}
+                      onChange={() => setPaymentMethod("online")}
+                      className="sr-only"
+                    />
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                      paymentMethod === "online" ? "border-gold" : "border-border"
+                    }`}>
+                      {paymentMethod === "online" && <div className="w-2.5 h-2.5 rounded-full bg-gold" />}
+                    </div>
+                    <CreditCard className={`w-5 h-5 shrink-0 ${paymentMethod === "online" ? "text-gold" : "text-muted-foreground"}`} />
+                    <div>
+                      <p className="text-sm font-medium">Pay Online</p>
+                      <p className="text-xs text-muted-foreground">Credit/Debit Card via N-Genius</p>
+                    </div>
+                  </label>
+
+                  <label
+                    className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${
+                      paymentMethod === "whatsapp"
+                        ? "border-[#25D366] bg-[#25D366]/5"
+                        : "border-border/30 hover:border-border/60"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment"
+                      checked={paymentMethod === "whatsapp"}
+                      onChange={() => setPaymentMethod("whatsapp")}
+                      className="sr-only"
+                    />
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                      paymentMethod === "whatsapp" ? "border-[#25D366]" : "border-border"
+                    }`}>
+                      {paymentMethod === "whatsapp" && <div className="w-2.5 h-2.5 rounded-full bg-[#25D366]" />}
+                    </div>
+                    <Send className={`w-5 h-5 shrink-0 ${paymentMethod === "whatsapp" ? "text-[#25D366]" : "text-muted-foreground"}`} />
+                    <div>
+                      <p className="text-sm font-medium">Order via WhatsApp</p>
+                      <p className="text-xs text-muted-foreground">Pay on delivery or bank transfer</p>
+                    </div>
+                  </label>
                 </div>
               </div>
             </div>
@@ -288,20 +416,35 @@ export default function Checkout() {
                     <span className="text-gold">{formatPrice(totalPrice)}</span>
                   </div>
                 </div>
+
+                {orderError && (
+                  <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                    {orderError}
+                  </div>
+                )}
+
                 <button
                   onClick={handlePlaceOrder}
-                  disabled={sending || !name || !phone}
-                  className="w-full bg-[#25D366] text-white py-3.5 tracking-[0.1em] uppercase text-sm font-medium hover:bg-[#25D366]/90 transition-all rounded-lg flex items-center justify-center gap-2 disabled:opacity-50"
+                  disabled={sending || !name || !phone || (paymentMethod === "online" && !email)}
+                  className={`w-full py-3.5 tracking-[0.1em] uppercase text-sm font-medium transition-all rounded-lg flex items-center justify-center gap-2 disabled:opacity-50 ${
+                    paymentMethod === "online"
+                      ? "bg-gold text-white hover:bg-gold/90"
+                      : "bg-[#25D366] text-white hover:bg-[#25D366]/90"
+                  }`}
                 >
                   {sending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : paymentMethod === "online" ? (
+                    <CreditCard className="w-4 h-4" />
                   ) : (
                     <Send className="w-4 h-4" />
                   )}
-                  Order via WhatsApp
+                  {paymentMethod === "online" ? "Pay Now" : "Order via WhatsApp"}
                 </button>
                 <p className="text-xs text-muted-foreground/50 text-center mt-3">
-                  Your order will be sent to our WhatsApp for confirmation
+                  {paymentMethod === "online"
+                    ? "You'll be redirected to a secure payment page"
+                    : "Your order will be sent to our WhatsApp for confirmation"}
                 </p>
               </div>
             </div>
