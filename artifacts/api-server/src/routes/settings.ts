@@ -280,10 +280,16 @@ router.put("/settings", async (req: Request, res: Response) => {
   if (!requireAuth(req, res)) return;
   const { storeUrl, consumerKey, consumerSecret, store } = req.body;
   const current = readConfig();
+  const nextConsumerKey = typeof consumerKey === "string"
+    ? (consumerKey.startsWith("••••") ? current.consumerKey : consumerKey.trim())
+    : current.consumerKey;
+  const nextConsumerSecret = typeof consumerSecret === "string"
+    ? (consumerSecret.startsWith("••••") ? current.consumerSecret : consumerSecret.trim())
+    : current.consumerSecret;
   const updated: WcConfig = {
     storeUrl: storeUrl || current.storeUrl,
-    consumerKey: consumerKey && !consumerKey.startsWith("••••") ? consumerKey : current.consumerKey,
-    consumerSecret: consumerSecret && !consumerSecret.startsWith("••••") ? consumerSecret : current.consumerSecret,
+    consumerKey: nextConsumerKey,
+    consumerSecret: nextConsumerSecret,
     store: store ? { ...(current.store || {}), ...store } : current.store,
   };
   writeConfig(updated);
