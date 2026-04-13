@@ -16,7 +16,7 @@ export default function Footer() {
 
           <div>
             <h4 className="font-serif text-lg tracking-wider mb-4 text-gold-light">Quick Links</h4>
-            <nav className="grid grid-cols-2 gap-x-6 gap-y-3 justify-items-center md:justify-items-start">
+            <nav className="flex gap-4 justify-center md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-3 md:justify-items-start">
               <Link href="/" className="text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-home">
                 Home
               </Link>
