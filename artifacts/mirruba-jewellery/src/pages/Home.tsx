@@ -178,7 +178,7 @@ function LuxuryBanner() {
   return (
     <section className="relative py-20 sm:py-32 overflow-hidden" data-testid="section-luxury-banner">
       <img
-        src="https://images.unsplash.com/photo-1515562141589-67f0d569b6fc?w=1600&h=800&fit=crop"
+        src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=1600&h=800&fit=crop"
         alt=""
         className="absolute inset-0 w-full h-full object-cover"
       />
