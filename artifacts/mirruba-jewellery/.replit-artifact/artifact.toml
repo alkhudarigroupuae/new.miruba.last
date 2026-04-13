@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Mirruba Jewellery"
+version = "1.0.0"
+id = "artifacts/mirruba-jewellery"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23879
+
+[services.development]
+run = "pnpm --filter @workspace/mirruba-jewellery run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/mirruba-jewellery", "run", "build" ]
+publicDir = "artifacts/mirruba-jewellery/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23879"
+BASE_PATH = "/"

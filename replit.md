@@ -1,8 +1,8 @@
-# Workspace
+# Mirruba Jewellery Website
 
 ## Overview
 
-pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
+Luxury jewellery e-commerce website for Mirruba Jewellery, based in Sharjah, UAE (Central Market). Built as a React + Vite frontend-only application with no backend required.
 
 ## Stack
 
@@ -10,18 +10,50 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **Node.js version**: 24
 - **Package manager**: pnpm
 - **TypeScript version**: 5.9
-- **API framework**: Express 5
-- **Database**: PostgreSQL + Drizzle ORM
-- **Validation**: Zod (`zod/v4`), `drizzle-zod`
-- **API codegen**: Orval (from OpenAPI spec)
-- **Build**: esbuild (CJS bundle)
+- **Frontend**: React + Vite + Tailwind CSS v4
+- **Routing**: wouter
+- **UI Components**: shadcn/ui (Radix UI)
+- **Icons**: lucide-react
+- **Fonts**: Cormorant Garamond (serif headings), Inter (sans body)
+- **State Management**: React Context (Cart)
+
+## Project Structure
+
+- `artifacts/mirruba-jewellery/` — Main website artifact (React + Vite)
+  - `src/pages/` — Page components (Home, Shop, ProductDetail, Checkout)
+  - `src/components/` — Shared components (Navbar, Footer, CartDrawer, ProductCard)
+  - `src/context/` — Cart context provider
+  - `src/data/` — Hardcoded product data and helpers
+  - `src/components/ui/` — shadcn/ui components
+- `artifacts/api-server/` — Express API server (unused for this project)
+- `artifacts/mockup-sandbox/` — Design mockup sandbox
+
+## Pages
+
+- `/` — Homepage (hero, about, featured products, logo marquee, contact form)
+- `/shop` — Product listing with category filters (Rings, Earrings, Necklaces, Bracelets)
+- `/product/:id` — Product detail page
+- `/checkout` — Checkout page with order summary
+
+## Features
+
+- Shopping cart with slide-over drawer (React Context)
+- Category filtering on shop page
+- Contact form (toast on submit)
+- Responsive design with mobile menu
+- Scroll animations and hover effects
+- Gold/luxury color theme
 
 ## Key Commands
 
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- `pnpm --filter @workspace/api-server run dev` — run API server locally
+- `pnpm --filter @workspace/mirruba-jewellery run dev` — run website locally
 
-See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
+## Brand Info
+
+- **Brand**: Mirruba Jewellery
+- **Location**: Sharjah, Emirates, Central Market
+- **Phone**: +971 501 045 496
+- **Email**: contact@mirruba-jewellery.com
+- **Currency**: AED (UAE Dirham)
