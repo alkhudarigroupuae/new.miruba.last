@@ -131,7 +131,7 @@ function CategoryShowcase() {
 
   const categories = [
     { name: "Rings", image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&h=600&fit=crop", slug: "rings" },
-    { name: "Necklaces", image: "https://images.unsplash.com/photo-1599643478518-a5f3899e7ce8?w=500&h=600&fit=crop", slug: "necklaces" },
+    { name: "Necklaces", image: "https://images.unsplash.com/photo-1515562141589-67f0d569b6fc?w=500&h=600&fit=crop", slug: "necklaces" },
     { name: "Earrings", image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&h=600&fit=crop", slug: "earrings" },
     { name: "Bracelets", image: "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=500&h=600&fit=crop", slug: "bracelets" },
   ];
