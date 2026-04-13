@@ -482,14 +482,14 @@ export default function Dashboard() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-muted-foreground mb-2">Currency</label>
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">Display Currency</label>
                   <select
                     value={currency}
                     onChange={(e) => setCurrency(e.target.value)}
                     className="w-full px-4 py-3 bg-[#0f0d0c] border border-border rounded-xl text-white placeholder:text-muted-foreground/50 focus:outline-none focus:border-gold transition-colors text-sm"
                   >
                     <option value="AED">AED (Dirham)</option>
-                    <option value="USD">USD ($ Dollar)</option>
+                    <option value="USD">USD ($ Dollar - display only)</option>
                   </select>
                 </div>
                 <div>

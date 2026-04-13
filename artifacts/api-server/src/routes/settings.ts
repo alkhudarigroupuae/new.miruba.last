@@ -293,9 +293,6 @@ router.put("/settings", async (req: Request, res: Response) => {
 
   if (s) {
     try {
-      if (s.currency) {
-        await updateWooSetting(updated, "woocommerce_currency", s.currency);
-      }
       if (s.contactEmail) {
         await updateWooSetting(updated, "woocommerce_email_from_address", s.contactEmail);
       }
