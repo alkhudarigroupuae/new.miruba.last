@@ -70,7 +70,10 @@ export default function Shop() {
     ])
       .then(([prods, cats]) => {
         setProducts(prods);
-        setCategories(cats.filter((c) => c.slug !== "uncategorized" && c.slug !== "all"));
+        const filtered = cats.filter((c) => c.slug !== "uncategorized");
+        const trending = filtered.filter((c) => c.slug === "trending");
+        const rest = filtered.filter((c) => c.slug !== "trending");
+        setCategories([...trending, ...rest]);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
