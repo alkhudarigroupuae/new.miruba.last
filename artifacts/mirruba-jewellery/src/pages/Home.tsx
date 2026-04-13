@@ -5,6 +5,7 @@ import ProductCard from "@/components/ProductCard";
 import { type WcProduct, type WcCategory } from "@/data/products";
 import { useProducts, useCategories } from "@/hooks/useProducts";
 import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
+import desktopBannerImg from "@assets/Untitled_design_(3)_1776088488510.jpg";
 import mobileBannerImg from "@assets/Untitled_design_(3)_1776088697980.jpg";
 
 function useInView(threshold = 0.1) {
@@ -25,8 +26,6 @@ function useInView(threshold = 0.1) {
   return { ref, isVisible };
 }
 
-const HERO_IMAGE = "https://www.mirruba-jewellery.com/static/media/jewellery-girl-welcome-row-1(2).f8dd553f2bb225f4ee47.png";
-
 function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden" data-testid="section-hero">
@@ -37,7 +36,7 @@ function HeroSection() {
       />
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden md:block"
-        style={{ backgroundImage: `url('${HERO_IMAGE}')` }}
+        style={{ backgroundImage: `url('${desktopBannerImg}')` }}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40" />
 
