@@ -66,9 +66,10 @@ export default function Shop() {
   const products = allProducts || [];
   const categories = (() => {
     const filtered = (allCats || []).filter((c) => c.slug !== "uncategorized");
+    const allMiruba = filtered.filter((c) => c.slug === "all-miruba-jewellery");
     const trending = filtered.filter((c) => c.slug === "trending");
-    const rest = filtered.filter((c) => c.slug !== "trending");
-    return [...trending, ...rest];
+    const rest = filtered.filter((c) => c.slug !== "trending" && c.slug !== "all-miruba-jewellery");
+    return [...allMiruba, ...trending, ...rest];
   })();
   const loading = productsLoading || catsLoading;
 
