@@ -111,8 +111,8 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => handleNavClick(link.href)}
-                className={`text-2xl font-medium tracking-[0.15em] uppercase transition-colors ${
-                  location === link.href ? "text-gold" : "text-foreground/70"
+                className={`text-2xl font-serif tracking-[0.15em] uppercase transition-colors ${
+                  location === link.href ? "text-gold" : "text-white/80 hover:text-gold"
                 }`}
                 data-testid={`link-mobile-${link.label.toLowerCase()}`}
               >
