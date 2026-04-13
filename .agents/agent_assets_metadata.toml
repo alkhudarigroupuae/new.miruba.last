@@ -1,0 +1,62 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "S4Oqac2ALwfjewwF4FvYi"
+uri = "file://artifacts/mirruba-jewellery/public/images/logo.png"
+type = "image"
+title = "Brand logo"
+
+[[generated]]
+id = "VcOfodNyGoxOJi6AsUGcA"
+uri = "file://artifacts/mirruba-jewellery/public/images/product-1.png"
+type = "image"
+title = "Royal Gold Ring"
+
+[[generated]]
+id = "5Jv1SUuC21_Zxc2_OXDc0"
+uri = "file://artifacts/mirruba-jewellery/public/images/product-2.png"
+type = "image"
+title = "Diamond Cascade Earrings"
+
+[[generated]]
+id = "GHT2q0ju3fB9F2ObIjPsW"
+uri = "file://artifacts/mirruba-jewellery/public/images/product-3.png"
+type = "image"
+title = "Pearl Drop Necklace"
+
+[[generated]]
+id = "GtuYZ3zLiQyIbwm1Zzab0"
+uri = "file://artifacts/mirruba-jewellery/public/images/product-4.png"
+type = "image"
+title = "Sapphire Twist Bracelet"
+
+[[generated]]
+id = "kdhqHRJFRn_FTGf0CNjEH"
+uri = "file://artifacts/mirruba-jewellery/public/images/product-5.png"
+type = "image"
+title = "Rose Gold Band"
+
+[[generated]]
+id = "1Ef4OhIIFjbTvNAKw2ncJ"
+uri = "file://artifacts/mirruba-jewellery/public/images/product-6.png"
+type = "image"
+title = "Emerald Stud Earrings"
+
+[[generated]]
+id = "NprJUDs52u3aWmBo2VxHE"
+uri = "file://artifacts/mirruba-jewellery/public/images/product-7.png"
+type = "image"
+title = "Layered Chain Necklace"
+
+[[generated]]
+id = "UqFuaNXWDeRBm6MeWWtCD"
+uri = "file://artifacts/mirruba-jewellery/public/images/product-8.png"
+type = "image"
+title = "Charm Link Bracelet"
+
+[[generated]]
+id = "7Jg1aaAj1FNVooXceB8cO"
+uri = "file://artifacts/mirruba-jewellery/public/images/product-9.png"
+type = "image"
+title = "Vintage Halo Ring"
