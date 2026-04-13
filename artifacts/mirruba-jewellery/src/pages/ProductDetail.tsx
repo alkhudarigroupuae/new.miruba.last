@@ -85,11 +85,11 @@ export default function ProductDetail() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
           <div className="opacity-0 animate-slide-in-left" style={{ animationDelay: "0.15s", animationFillMode: "forwards" }}>
-            <div className="relative overflow-hidden rounded-lg bg-muted aspect-square group">
+            <div className="relative overflow-hidden rounded-lg bg-muted group">
               <img
                 src={currentImage}
                 alt={product.name}
-                className="w-full h-full object-cover opacity-0 animate-luxury-reveal transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-auto object-contain opacity-0 animate-luxury-reveal transition-transform duration-700 group-hover:scale-105"
                 style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
