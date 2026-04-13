@@ -3,6 +3,28 @@ import { getActiveConfig } from "./settings";
 
 const router = Router();
 
+interface CacheEntry {
+  data: any;
+  timestamp: number;
+}
+
+const cache = new Map<string, CacheEntry>();
+const CACHE_TTL = 5 * 60 * 1000;
+
+function getCached(key: string): any | null {
+  const entry = cache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.timestamp > CACHE_TTL) {
+    cache.delete(key);
+    return null;
+  }
+  return entry.data;
+}
+
+function setCache(key: string, data: any) {
+  cache.set(key, { data, timestamp: Date.now() });
+}
+
 async function wcFetch(endpoint: string, params: Record<string, string> = {}) {
   const config = getActiveConfig();
   const url = new URL(`/wp-json/wc/v3${endpoint}`, config.storeUrl);
@@ -19,6 +41,18 @@ async function wcFetch(endpoint: string, params: Record<string, string> = {}) {
     throw new Error(`WooCommerce API error: ${res.status}`);
   }
   return res.json();
+}
+
+async function wcFetchCached(endpoint: string, params: Record<string, string> = {}) {
+  const sortedParams = Object.entries(params).sort(([a], [b]) => a.localeCompare(b));
+  const cacheKey = `${endpoint}?${sortedParams.map(([k, v]) => `${k}=${v}`).join("&")}`;
+
+  const cached = getCached(cacheKey);
+  if (cached) return { data: cached, fromCache: true };
+
+  const data = await wcFetch(endpoint, params);
+  setCache(cacheKey, data);
+  return { data, fromCache: false };
 }
 
 async function wcPost(endpoint: string, body: any) {
@@ -48,7 +82,9 @@ router.get("/wc/products", async (req: Request, res: Response) => {
     if (req.query.page) params.page = String(req.query.page);
     if (req.query.featured) params.featured = String(req.query.featured);
     if (req.query.slug) params.slug = String(req.query.slug);
-    const data = await wcFetch("/products", params);
+    const { data, fromCache } = await wcFetchCached("/products", params);
+    res.set("X-Cache", fromCache ? "HIT" : "MISS");
+    res.set("Cache-Control", "public, max-age=300");
     res.json(data);
   } catch (err) {
     req.log.error({ err }, "Failed to fetch WooCommerce products");
@@ -58,7 +94,9 @@ router.get("/wc/products", async (req: Request, res: Response) => {
 
 router.get("/wc/products/:id", async (req: Request, res: Response) => {
   try {
-    const data = await wcFetch(`/products/${req.params.id}`);
+    const { data, fromCache } = await wcFetchCached(`/products/${req.params.id}`);
+    res.set("X-Cache", fromCache ? "HIT" : "MISS");
+    res.set("Cache-Control", "public, max-age=300");
     res.json(data);
   } catch (err) {
     req.log.error({ err }, "Failed to fetch WooCommerce product");
@@ -68,7 +106,9 @@ router.get("/wc/products/:id", async (req: Request, res: Response) => {
 
 router.get("/wc/categories", async (_req: Request, res: Response) => {
   try {
-    const data = await wcFetch("/products/categories", { per_page: "100" });
+    const { data, fromCache } = await wcFetchCached("/products/categories", { per_page: "100" });
+    res.set("X-Cache", fromCache ? "HIT" : "MISS");
+    res.set("Cache-Control", "public, max-age=300");
     res.json(data);
   } catch (err) {
     _req.log.error({ err }, "Failed to fetch WooCommerce categories");
@@ -112,6 +152,7 @@ router.post("/wc/orders", async (req: Request, res: Response) => {
     const config = getActiveConfig();
     const checkoutUrl = `${config.storeUrl}/checkout/order-pay/${order.id}/?pay_for_order=true&key=${order.order_key}`;
 
+    res.set("Cache-Control", "no-store");
     res.json({
       success: true,
       order_id: order.id,
@@ -123,6 +164,11 @@ router.post("/wc/orders", async (req: Request, res: Response) => {
     req.log.error({ err }, "Failed to create WooCommerce order");
     res.status(500).json({ error: "Failed to create order", details: err.message });
   }
+});
+
+router.post("/wc/cache/clear", async (_req: Request, res: Response) => {
+  cache.clear();
+  res.json({ success: true, message: "Cache cleared" });
 });
 
 export default router;

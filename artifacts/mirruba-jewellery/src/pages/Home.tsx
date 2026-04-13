@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
-import { fetchProducts, fetchCategories, type WcProduct, type WcCategory } from "@/data/products";
+import { type WcProduct, type WcCategory } from "@/data/products";
+import { useProducts, useCategories } from "@/hooks/useProducts";
 import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
 import mobileBannerImg from "@assets/Untitled_design_(3)_1776088697980.jpg";
 
@@ -67,18 +68,9 @@ function HeroSection() {
 }
 
 function FeaturedSection() {
-  const [products, setProducts] = useState<WcProduct[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: allProducts, isLoading: loading } = useProducts();
+  const products = (allProducts || []).slice(0, 4);
   const { ref, isVisible } = useInView(0.1);
-
-  useEffect(() => {
-    fetchProducts()
-      .then((prods) => {
-        setProducts(prods.slice(0, 4));
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
 
   return (
     <section className="py-12 sm:py-24 bg-muted/30" data-testid="section-featured">
@@ -124,18 +116,8 @@ function FeaturedSection() {
 
 function CategoryShowcase() {
   const { ref, isVisible } = useInView(0.05);
-  const [categories, setCategories] = useState<WcCategory[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchCategories()
-      .then((cats) => {
-        const filtered = cats.filter((c) => c.slug !== "uncategorized");
-        setCategories(filtered);
-      })
-      .catch((err) => console.error("Failed to load categories:", err))
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: allCats, isLoading: loading } = useCategories();
+  const categories = (allCats || []).filter((c) => c.slug !== "uncategorized");
 
   if (!loading && categories.length === 0) return null;
 
@@ -218,18 +200,11 @@ function LuxuryBanner() {
 
 function AboutPreview() {
   const { ref, isVisible } = useInView(0.2);
-  const [previewImage, setPreviewImage] = useState<string>("");
-
-  useEffect(() => {
-    fetchProducts()
-      .then((prods) => {
-        const withImages = prods.filter((p) => p.images.length > 0);
-        if (withImages.length > 0) {
-          setPreviewImage(withImages[0].images[0].src);
-        }
-      })
-      .catch(() => {});
-  }, []);
+  const { data: allProducts } = useProducts();
+  const previewImage = (() => {
+    const withImages = (allProducts || []).filter((p) => p.images.length > 0);
+    return withImages.length > 0 ? withImages[0].images[0].src : "";
+  })();
 
   return (
     <section className="py-16 sm:py-24 bg-background" data-testid="section-about-preview">

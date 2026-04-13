@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ProductCard from "@/components/ProductCard";
-import { fetchProducts, fetchCategories, type WcProduct, type WcCategory } from "@/data/products";
+import { type WcProduct, type WcCategory } from "@/data/products";
+import { useProducts, useCategories } from "@/hooks/useProducts";
 
 function CategoryIcon({ slug }: { slug: string }) {
   const iconClass = "w-5 h-5";
@@ -58,26 +59,18 @@ function CategoryIcon({ slug }: { slug: string }) {
 }
 
 export default function Shop() {
-  const [products, setProducts] = useState<WcProduct[]>([]);
-  const [categories, setCategories] = useState<WcCategory[]>([]);
+  const { data: allProducts, isLoading: productsLoading } = useProducts();
+  const { data: allCats, isLoading: catsLoading } = useCategories();
   const [activeCategory, setActiveCategory] = useState<string>("All");
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    Promise.all([
-      fetchProducts(),
-      fetchCategories(),
-    ])
-      .then(([prods, cats]) => {
-        setProducts(prods);
-        const filtered = cats.filter((c) => c.slug !== "uncategorized");
-        const trending = filtered.filter((c) => c.slug === "trending");
-        const rest = filtered.filter((c) => c.slug !== "trending");
-        setCategories([...trending, ...rest]);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  const products = allProducts || [];
+  const categories = (() => {
+    const filtered = (allCats || []).filter((c) => c.slug !== "uncategorized");
+    const trending = filtered.filter((c) => c.slug === "trending");
+    const rest = filtered.filter((c) => c.slug !== "trending");
+    return [...trending, ...rest];
+  })();
+  const loading = productsLoading || catsLoading;
 
   const filteredProducts =
     activeCategory === "All"
