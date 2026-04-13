@@ -40,18 +40,40 @@ function setCache(key: string, data: unknown) {
   cache.set(key, { data, timestamp: Date.now() });
 }
 
+function hasWooCredentials() {
+  const config = getActiveConfig();
+  return Boolean(config.storeUrl && config.consumerKey && config.consumerSecret);
+}
+
+async function fetchWithWooAuthFallback(url: URL, init: RequestInit = {}): Promise<Response> {
+  const config = getActiveConfig();
+  if (!config.storeUrl || !config.consumerKey || !config.consumerSecret) {
+    throw new Error("WooCommerce credentials are not configured");
+  }
+
+  const baseHeaders = init.headers ? new Headers(init.headers) : new Headers();
+  const basicHeaders = new Headers(baseHeaders);
+  basicHeaders.set("Authorization", `Basic ${Buffer.from(`${config.consumerKey}:${config.consumerSecret}`).toString("base64")}`);
+
+  const basicRes = await fetch(url.toString(), { ...init, headers: basicHeaders });
+  if (basicRes.status !== 401) return basicRes;
+
+  const keyQueryUrl = new URL(url.toString());
+  keyQueryUrl.searchParams.set("consumer_key", config.consumerKey);
+  keyQueryUrl.searchParams.set("consumer_secret", config.consumerSecret);
+  return fetch(keyQueryUrl.toString(), { ...init, headers: baseHeaders });
+}
+
 async function wcFetch<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
   const config = getActiveConfig();
+  if (!hasWooCredentials()) {
+    throw new Error("WooCommerce credentials are not configured");
+  }
   const url = new URL(`/wp-json/wc/v3${endpoint}`, config.storeUrl);
   for (const [k, v] of Object.entries(params)) {
     url.searchParams.set(k, v);
   }
-  const credentials = Buffer.from(`${config.consumerKey}:${config.consumerSecret}`).toString("base64");
-  const res = await fetch(url.toString(), {
-    headers: {
-      Authorization: `Basic ${credentials}`,
-    },
-  });
+  const res = await fetchWithWooAuthFallback(url);
   if (!res.ok) {
     throw new Error(`WooCommerce API error: ${res.status}`);
   }
@@ -72,12 +94,13 @@ async function wcFetchCached<T>(endpoint: string, params: Record<string, string>
 
 async function wcPost<T>(endpoint: string, body: unknown): Promise<T> {
   const config = getActiveConfig();
+  if (!hasWooCredentials()) {
+    throw new Error("WooCommerce credentials are not configured");
+  }
   const url = new URL(`/wp-json/wc/v3${endpoint}`, config.storeUrl);
-  const credentials = Buffer.from(`${config.consumerKey}:${config.consumerSecret}`).toString("base64");
-  const res = await fetch(url.toString(), {
+  const res = await fetchWithWooAuthFallback(url, {
     method: "POST",
     headers: {
-      Authorization: `Basic ${credentials}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
@@ -113,6 +136,9 @@ interface WcOrderResponse {
 }
 
 router.get("/wc/products", async (req: Request, res: Response) => {
+  if (!hasWooCredentials()) {
+    return res.status(503).json({ error: "WooCommerce credentials are not configured" });
+  }
   try {
     const params: Record<string, string> = { per_page: "100" };
     if (req.query.category) params.category = String(req.query.category);
@@ -131,6 +157,9 @@ router.get("/wc/products", async (req: Request, res: Response) => {
 });
 
 router.get("/wc/products/:id", async (req: Request, res: Response) => {
+  if (!hasWooCredentials()) {
+    return res.status(503).json({ error: "WooCommerce credentials are not configured" });
+  }
   try {
     const { data, fromCache } = await wcFetchCached(`/products/${req.params.id}`);
     res.set("X-Cache", fromCache ? "HIT" : "MISS");
@@ -143,6 +172,9 @@ router.get("/wc/products/:id", async (req: Request, res: Response) => {
 });
 
 router.get("/wc/categories", async (_req: Request, res: Response) => {
+  if (!hasWooCredentials()) {
+    return res.status(503).json({ error: "WooCommerce credentials are not configured" });
+  }
   try {
     const { data, fromCache } = await wcFetchCached("/products/categories", { per_page: "100" });
     res.set("X-Cache", fromCache ? "HIT" : "MISS");

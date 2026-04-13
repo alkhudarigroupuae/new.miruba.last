@@ -80,6 +80,28 @@ function wcCredentials(config: WcConfig): string {
   return Buffer.from(`${config.consumerKey}:${config.consumerSecret}`).toString("base64");
 }
 
+function hasWooCredentials(config: WcConfig): boolean {
+  return Boolean(config.storeUrl && config.consumerKey && config.consumerSecret);
+}
+
+async function wcFetchWithAuthFallback(url: URL, init: RequestInit, config: WcConfig): Promise<Response> {
+  if (!hasWooCredentials(config)) {
+    throw new Error("WooCommerce credentials are not configured");
+  }
+
+  const baseHeaders = init.headers ? new Headers(init.headers) : new Headers();
+  const basicHeaders = new Headers(baseHeaders);
+  basicHeaders.set("Authorization", `Basic ${wcCredentials(config)}`);
+
+  const basicRes = await fetch(url.toString(), { ...init, headers: basicHeaders });
+  if (basicRes.status !== 401) return basicRes;
+
+  const keyQueryUrl = new URL(url.toString());
+  keyQueryUrl.searchParams.set("consumer_key", config.consumerKey);
+  keyQueryUrl.searchParams.set("consumer_secret", config.consumerSecret);
+  return fetch(keyQueryUrl.toString(), { ...init, headers: baseHeaders });
+}
+
 async function fetchWpPublicInfo(storeUrl: string): Promise<RemoteStoreInfo> {
   try {
     const res = await fetch(`${baseUrl(storeUrl)}/wp-json`);
@@ -95,11 +117,10 @@ async function fetchWpPublicInfo(storeUrl: string): Promise<RemoteStoreInfo> {
 }
 
 async function fetchWooGeneralSettings(config: WcConfig): Promise<Record<string, string>> {
-  if (!config.storeUrl || !config.consumerKey || !config.consumerSecret) return {};
+  if (!hasWooCredentials(config)) return {};
   try {
-    const res = await fetch(`${baseUrl(config.storeUrl)}/wp-json/wc/v3/settings/general`, {
-      headers: { Authorization: `Basic ${wcCredentials(config)}` },
-    });
+    const url = new URL(`${baseUrl(config.storeUrl)}/wp-json/wc/v3/settings/general`);
+    const res = await wcFetchWithAuthFallback(url, {}, config);
     if (!res.ok) return {};
     const settings = (await res.json()) as Array<{ id?: string; value?: unknown }>;
     const map: Record<string, string> = {};
@@ -135,16 +156,15 @@ async function getRemoteStoreInfo(config: WcConfig): Promise<RemoteStoreInfo> {
 }
 
 async function updateWooSetting(config: WcConfig, id: string, value: string): Promise<void> {
-  if (!config.storeUrl || !config.consumerKey || !config.consumerSecret) return;
+  if (!hasWooCredentials(config)) return;
   const url = `${baseUrl(config.storeUrl)}/wp-json/wc/v3/settings/general/${id}`;
-  const res = await fetch(url, {
+  const res = await wcFetchWithAuthFallback(new URL(url), {
     method: "PUT",
     headers: {
-      Authorization: `Basic ${wcCredentials(config)}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ value }),
-  });
+  }, config);
   if (!res.ok) {
     const body = await res.text();
     throw new Error(`Woo setting "${id}" update failed: ${res.status} ${body}`);
@@ -301,18 +321,24 @@ router.put("/settings", async (req: Request, res: Response) => {
 router.post("/settings/test", async (req: Request, res: Response) => {
   if (!requireAuth(req, res)) return;
   const config = readConfig();
+  if (!hasWooCredentials(config)) {
+    return res.json({
+      success: false,
+      message: "Store URL and WooCommerce API credentials are required.",
+    });
+  }
   try {
     const url = new URL("/wp-json/wc/v3/products", config.storeUrl);
     url.searchParams.set("per_page", "1");
-    const credentials = Buffer.from(`${config.consumerKey}:${config.consumerSecret}`).toString("base64");
-    const wcRes = await fetch(url.toString(), {
-      headers: { Authorization: `Basic ${credentials}` },
-    });
+    const wcRes = await wcFetchWithAuthFallback(url, {}, config);
     if (wcRes.ok) {
       const data = await wcRes.json();
       res.json({ success: true, message: `Connected! Found ${Array.isArray(data) ? data.length : 0} product(s).` });
     } else {
-      res.json({ success: false, message: `Connection failed: HTTP ${wcRes.status}` });
+      const message = wcRes.status === 401
+        ? "Connection failed: HTTP 401 (check Consumer Key/Secret and API permissions)"
+        : `Connection failed: HTTP ${wcRes.status}`;
+      res.json({ success: false, message });
     }
   } catch (err: any) {
     res.json({ success: false, message: `Connection error: ${err.message}` });
