@@ -149,7 +149,7 @@ function CategoryShowcase() {
         {loading ? (
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="rounded-lg aspect-[3/4] bg-[#2a2523] animate-pulse" />
+              <div key={i} className="rounded-lg aspect-square bg-[#2a2523] animate-pulse" />
             ))}
           </div>
         ) : (
@@ -158,7 +158,7 @@ function CategoryShowcase() {
               <Link
                 key={cat.id}
                 href="/shop"
-                className={`group relative overflow-hidden rounded-lg aspect-[3/4] transition-all duration-700 hover:shadow-[0_0_35px_rgba(231,188,103,0.3)] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+                className={`group relative overflow-hidden rounded-lg aspect-square transition-all duration-700 hover:shadow-[0_0_35px_rgba(231,188,103,0.3)] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
                 style={{ transitionDelay: `${i * 150}ms` }}
               >
                 {cat.image ? (
