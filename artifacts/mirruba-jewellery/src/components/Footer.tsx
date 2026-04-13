@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { MapPin, Phone, Mail, Send, CheckCircle, Loader2 } from "lucide-react";
 import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
+import { useStore } from "@/context/StoreContext";
 
 function NewsletterSection() {
   const [email, setEmail] = useState("");
@@ -84,6 +85,8 @@ function NewsletterSection() {
 }
 
 export default function Footer() {
+  const store = useStore();
+
   return (
     <>
     <NewsletterSection />
@@ -91,9 +94,9 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-12 mb-6 sm:mb-12 text-center md:text-left">
           <div className="flex flex-col items-center md:items-start">
-            <img src={logoImg} alt="Mirruba Jewellery" className="h-10 w-auto mb-4 brightness-150" />
+            <img src={logoImg} alt={store.storeName} className="h-10 w-auto mb-4 brightness-150" />
             <p className="text-sm leading-relaxed text-foreground/90">
-              An Icon Of Absolute Femininity. We are committed to providing a unique shopping experience with the perfect jewelry pieces that suit your style.
+              {store.tagline}. We are committed to providing a unique shopping experience with the perfect jewelry pieces that suit your style.
             </p>
           </div>
 
@@ -118,31 +121,31 @@ export default function Footer() {
           <div className="flex flex-col items-center md:items-start">
             <h4 className="font-serif text-lg tracking-wider mb-4 text-gold-light hidden md:block">Contact</h4>
             <div className="flex gap-6 md:hidden">
-              <a href="https://maps.google.com/?q=Sharjah+Emirates+Central+Market" target="_blank" rel="noopener noreferrer" className="w-11 h-11 rounded-full bg-gold/10 flex items-center justify-center text-gold-light hover:bg-gold/20 transition-colors">
+              <a href={`https://maps.google.com/?q=${encodeURIComponent(store.address)}`} target="_blank" rel="noopener noreferrer" className="w-11 h-11 rounded-full bg-gold/10 flex items-center justify-center text-gold-light hover:bg-gold/20 transition-colors">
                 <MapPin className="w-5 h-5" />
               </a>
-              <a href="tel:+971501045496" className="w-11 h-11 rounded-full bg-gold/10 flex items-center justify-center text-gold-light hover:bg-gold/20 transition-colors">
+              <a href={`tel:${store.contactPhone.replace(/\s/g, "")}`} className="w-11 h-11 rounded-full bg-gold/10 flex items-center justify-center text-gold-light hover:bg-gold/20 transition-colors">
                 <Phone className="w-5 h-5" />
               </a>
-              <a href="mailto:contact@mirruba-jewellery.com" className="w-11 h-11 rounded-full bg-gold/10 flex items-center justify-center text-gold-light hover:bg-gold/20 transition-colors">
+              <a href={`mailto:${store.contactEmail}`} className="w-11 h-11 rounded-full bg-gold/10 flex items-center justify-center text-gold-light hover:bg-gold/20 transition-colors">
                 <Mail className="w-5 h-5" />
               </a>
             </div>
             <div className="hidden md:block space-y-3">
               <div className="flex items-start gap-3 text-sm text-foreground/80">
                 <MapPin className="w-4 h-4 mt-0.5 text-gold-light shrink-0" />
-                <span>Sharjah, Emirates, Central Market</span>
+                <span>{store.address}</span>
               </div>
               <div className="flex items-center gap-3 text-sm text-foreground/80">
                 <Phone className="w-4 h-4 text-gold-light shrink-0" />
-                <a href="tel:+971501045496" className="hover:text-gold-light transition-colors">
-                  +971 501 045 496
+                <a href={`tel:${store.contactPhone.replace(/\s/g, "")}`} className="hover:text-gold-light transition-colors">
+                  {store.contactPhone}
                 </a>
               </div>
               <div className="flex items-center gap-3 text-sm text-foreground/80">
                 <Mail className="w-4 h-4 text-gold-light shrink-0" />
-                <a href="mailto:contact@mirruba-jewellery.com" className="hover:text-gold-light transition-colors">
-                  contact@mirruba-jewellery.com
+                <a href={`mailto:${store.contactEmail}`} className="hover:text-gold-light transition-colors">
+                  {store.contactEmail}
                 </a>
               </div>
             </div>
@@ -152,7 +155,7 @@ export default function Footer() {
       <div className="bg-[#231f20] mt-0 py-4 sm:py-5 border-t border-gold/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <p className="text-xs text-gold/90">
-            &copy; {new Date().getFullYear()} Mirruba Jewellery. All rights reserved.
+            &copy; {new Date().getFullYear()} {store.storeName}. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <Link
@@ -162,25 +165,33 @@ export default function Footer() {
             >
               Terms of Service
             </Link>
-            <a
-              href="#"
-              className="text-gold/70 hover:text-gold transition-colors text-sm"
-              data-testid="link-facebook"
-            >
-              Facebook
-            </a>
-            <a
-              href="#"
-              className="text-gold/70 hover:text-gold transition-colors text-sm"
-              data-testid="link-instagram"
-            >
-              Instagram
-            </a>
+            {store.facebookUrl && (
+              <a
+                href={store.facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gold/70 hover:text-gold transition-colors text-sm"
+                data-testid="link-facebook"
+              >
+                Facebook
+              </a>
+            )}
+            {store.instagramUrl && (
+              <a
+                href={store.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gold/70 hover:text-gold transition-colors text-sm"
+                data-testid="link-instagram"
+              >
+                Instagram
+              </a>
+            )}
           </div>
         </div>
         <div className="text-center mt-6 pb-2">
           <p className="text-xs text-white">
-            Developed by <a href="https://mr-appss.com/" target="_blank" rel="noopener noreferrer" className="text-gold hover:text-gold-light transition-colors">Mr Apps</a>
+            Developed by <a href={store.developerUrl} target="_blank" rel="noopener noreferrer" className="text-gold hover:text-gold-light transition-colors">{store.developerName}</a>
           </p>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { MapPin, Phone, Mail, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useStore } from "@/context/StoreContext";
 
 function useInView(threshold = 0.1) {
   const ref = useRef<HTMLDivElement>(null);
@@ -38,6 +39,7 @@ function HeroBanner() {
 }
 
 function ContactFormSection() {
+  const store = useStore();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -75,7 +77,7 @@ function ContactFormSection() {
               </div>
               <div>
                 <h4 className="font-serif text-lg mb-1">Visit Us</h4>
-                <p className="text-muted-foreground text-sm">Sharjah, Emirates, Central Market</p>
+                <p className="text-muted-foreground text-sm">{store.address}</p>
               </div>
             </div>
             <div className="flex items-start gap-4">
@@ -84,8 +86,8 @@ function ContactFormSection() {
               </div>
               <div>
                 <h4 className="font-serif text-lg mb-1">Call Us</h4>
-                <a href="tel:+971501045496" className="text-muted-foreground text-sm hover:text-gold transition-colors">
-                  +971 501 045 496
+                <a href={`tel:${store.contactPhone.replace(/\s/g, "")}`} className="text-muted-foreground text-sm hover:text-gold transition-colors">
+                  {store.contactPhone}
                 </a>
               </div>
             </div>
@@ -95,8 +97,8 @@ function ContactFormSection() {
               </div>
               <div>
                 <h4 className="font-serif text-lg mb-1">Email Us</h4>
-                <a href="mailto:contact@mirruba-jewellery.com" className="text-muted-foreground text-sm hover:text-gold transition-colors">
-                  contact@mirruba-jewellery.com
+                <a href={`mailto:${store.contactEmail}`} className="text-muted-foreground text-sm hover:text-gold transition-colors">
+                  {store.contactEmail}
                 </a>
               </div>
             </div>

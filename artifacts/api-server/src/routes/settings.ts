@@ -6,10 +6,25 @@ const router = Router();
 
 const CONFIG_PATH = path.join(process.cwd(), ".wc-config.json");
 
+interface StoreSettings {
+  storeName: string;
+  tagline: string;
+  currency: string;
+  whatsappNumber: string;
+  contactEmail: string;
+  contactPhone: string;
+  address: string;
+  facebookUrl: string;
+  instagramUrl: string;
+  developerName: string;
+  developerUrl: string;
+}
+
 interface WcConfig {
   storeUrl: string;
   consumerKey: string;
   consumerSecret: string;
+  store?: StoreSettings;
 }
 
 function readConfig(): WcConfig {
@@ -59,25 +74,59 @@ router.post("/auth/login", (req: Request, res: Response) => {
   }
 });
 
+router.get("/store-info", (_req: Request, res: Response) => {
+  const config = readConfig();
+  const s = config.store || {} as StoreSettings;
+  res.set("Cache-Control", "public, max-age=300");
+  res.json({
+    storeName: s.storeName || "Mirruba Jewellery",
+    tagline: s.tagline || "An Icon Of Absolute Femininity",
+    currency: s.currency || "AED",
+    whatsappNumber: s.whatsappNumber || "971501045496",
+    contactEmail: s.contactEmail || "contact@mirruba-jewellery.com",
+    contactPhone: s.contactPhone || "+971 501 045 496",
+    address: s.address || "Sharjah, Emirates, Central Market",
+    facebookUrl: s.facebookUrl || "",
+    instagramUrl: s.instagramUrl || "",
+    developerName: s.developerName || "Mr Apps",
+    developerUrl: s.developerUrl || "https://mr-appss.com/",
+  });
+});
+
 router.get("/settings", (req: Request, res: Response) => {
   if (!requireAuth(req, res)) return;
   const config = readConfig();
+  const s = config.store || {} as StoreSettings;
   res.json({
     storeUrl: config.storeUrl,
     consumerKey: config.consumerKey ? "••••" + config.consumerKey.slice(-4) : "",
     consumerSecret: config.consumerSecret ? "••••" + config.consumerSecret.slice(-4) : "",
     hasKeys: !!(config.consumerKey && config.consumerSecret),
+    store: {
+      storeName: s.storeName || "Mirruba Jewellery",
+      tagline: s.tagline || "An Icon Of Absolute Femininity",
+      currency: s.currency || "AED",
+      whatsappNumber: s.whatsappNumber || "971501045496",
+      contactEmail: s.contactEmail || "contact@mirruba-jewellery.com",
+      contactPhone: s.contactPhone || "+971 501 045 496",
+      address: s.address || "Sharjah, Emirates, Central Market",
+      facebookUrl: s.facebookUrl || "",
+      instagramUrl: s.instagramUrl || "",
+      developerName: s.developerName || "Mr Apps",
+      developerUrl: s.developerUrl || "https://mr-appss.com/",
+    },
   });
 });
 
 router.put("/settings", (req: Request, res: Response) => {
   if (!requireAuth(req, res)) return;
-  const { storeUrl, consumerKey, consumerSecret } = req.body;
+  const { storeUrl, consumerKey, consumerSecret, store } = req.body;
   const current = readConfig();
   const updated: WcConfig = {
     storeUrl: storeUrl || current.storeUrl,
     consumerKey: consumerKey && !consumerKey.startsWith("••••") ? consumerKey : current.consumerKey,
     consumerSecret: consumerSecret && !consumerSecret.startsWith("••••") ? consumerSecret : current.consumerSecret,
+    store: store ? { ...(current.store || {}), ...store } : current.store,
   };
   writeConfig(updated);
   res.json({ success: true, message: "Settings updated successfully" });

@@ -2,10 +2,12 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { ArrowLeft, Trash2, ShoppingBag, Minus, Plus, Send, Loader2, CheckCircle, CreditCard } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useStore } from "@/context/StoreContext";
 import { formatPrice, getProductImage, getProductCategory } from "@/data/products";
 
 export default function Checkout() {
   const { items, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
+  const store = useStore();
   const [step, setStep] = useState<"cart" | "details" | "success">("cart");
   const [sending, setSending] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"online" | "whatsapp">("online");
@@ -79,7 +81,7 @@ export default function Checkout() {
     );
 
     const message = [
-      `🛍 *New Order — Mirruba Jewellery*`,
+      `🛍 *New Order — ${store.storeName}*`,
       ``,
       `*Customer:* ${name}`,
       `*Phone:* ${phone}`,
@@ -95,7 +97,7 @@ export default function Checkout() {
       .filter(Boolean)
       .join("\n");
 
-    const whatsappUrl = `https://wa.me/971501045496?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/${store.whatsappNumber}?text=${encodeURIComponent(message)}`;
 
     setTimeout(() => {
       window.open(whatsappUrl, "_blank");
