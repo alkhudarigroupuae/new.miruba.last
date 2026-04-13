@@ -45,7 +45,7 @@ export default function Navbar() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
           ? "bg-[#231f20]/95 backdrop-blur-md shadow-md"
-          : "bg-[#231f20] md:bg-transparent"
+          : "bg-gradient-to-b from-black/70 to-transparent"
       }`}
       data-testid="navbar"
     >
