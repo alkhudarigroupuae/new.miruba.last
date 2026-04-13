@@ -126,6 +126,86 @@ function FeaturedSection() {
   );
 }
 
+function CategoryShowcase() {
+  const { ref, isVisible } = useInView(0.1);
+
+  const categories = [
+    { name: "Rings", image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&h=600&fit=crop", slug: "rings" },
+    { name: "Necklaces", image: "https://images.unsplash.com/photo-1599643478518-a5f3899e7ce8?w=500&h=600&fit=crop", slug: "necklaces" },
+    { name: "Earrings", image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&h=600&fit=crop", slug: "earrings" },
+    { name: "Bracelets", image: "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=500&h=600&fit=crop", slug: "bracelets" },
+  ];
+
+  return (
+    <section className="py-16 sm:py-24 bg-background" data-testid="section-categories">
+      <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className={`text-center mb-10 sm:mb-16 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+          <p className="text-gold tracking-[0.3em] text-xs uppercase mb-4">Explore</p>
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl mb-4">Shop By Category</h2>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {categories.map((cat, i) => (
+            <Link
+              key={cat.slug}
+              href="/shop"
+              className={`group relative overflow-hidden rounded-lg aspect-[3/4] transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+              style={{ transitionDelay: `${i * 150}ms` }}
+            >
+              <img
+                src={cat.image}
+                alt={cat.name}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+                <h3 className="font-serif text-lg sm:text-xl text-white mb-1">{cat.name}</h3>
+                <span className="text-gold-light text-xs tracking-[0.15em] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300 inline-flex items-center gap-1">
+                  Explore <ArrowRight className="w-3 h-3" />
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function LuxuryBanner() {
+  const { ref, isVisible } = useInView(0.2);
+
+  return (
+    <section className="relative py-20 sm:py-32 overflow-hidden" data-testid="section-luxury-banner">
+      <img
+        src="https://images.unsplash.com/photo-1515562141589-67f0d569b6fc?w=1600&h=800&fit=crop"
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-black/60" />
+      <div ref={ref} className="relative z-10 max-w-3xl mx-auto text-center px-4">
+        <p className={`text-gold-light tracking-[0.4em] text-xs sm:text-sm uppercase mb-4 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
+          Timeless Elegance
+        </p>
+        <h2 className={`font-serif text-3xl sm:text-4xl lg:text-5xl mb-6 text-white transition-all duration-700 delay-200 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
+          Crafted With Passion,<br />Worn With Pride
+        </h2>
+        <p className={`text-white/70 text-sm sm:text-base leading-relaxed mb-8 max-w-xl mx-auto transition-all duration-700 delay-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
+          Each Mirruba piece is meticulously handcrafted by master artisans, blending traditional techniques with contemporary design to create jewelry that tells your unique story.
+        </p>
+        <Link
+          href="/shop"
+          className={`inline-flex items-center gap-3 border border-gold text-gold px-8 py-3.5 tracking-[0.2em] uppercase text-sm font-medium hover:bg-gold hover:text-white transition-all duration-300 rounded ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+          style={{ transitionDelay: "400ms" }}
+        >
+          Discover Collection
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
+    </section>
+  );
+}
+
 function AboutPreview() {
   const { ref, isVisible } = useInView(0.2);
 
@@ -191,6 +271,8 @@ export default function Home() {
     <main>
       <HeroSection />
       <FeaturedSection />
+      <CategoryShowcase />
+      <LuxuryBanner />
       <AboutPreview />
       <MarqueeSection />
     </main>
