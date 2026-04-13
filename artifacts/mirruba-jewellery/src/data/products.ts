@@ -70,10 +70,12 @@ export async function fetchCategories(): Promise<WcCategory[]> {
   return res.json();
 }
 
-export function formatPrice(price: string | number): string {
+export function formatPrice(price: string | number, currency: string = "AED"): string {
   const num = typeof price === "string" ? parseFloat(price) : price;
-  if (isNaN(num)) return "AED 0";
-  return `AED ${num.toLocaleString()}`;
+  const normalizedCurrency = currency === "USD" ? "USD" : "AED";
+  const symbol = normalizedCurrency === "USD" ? "$" : "AED";
+  if (isNaN(num)) return `${symbol} 0`;
+  return `${symbol} ${num.toLocaleString()}`;
 }
 
 export function getProductImage(product: WcProduct): string {

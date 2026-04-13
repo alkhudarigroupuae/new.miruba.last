@@ -77,7 +77,7 @@ export default function Checkout() {
 
     const orderLines = items.map(
       (item) =>
-        `• ${item.product.name} x${item.quantity} — ${formatPrice(parseFloat(item.product.price || "0") * item.quantity)}`
+        `• ${item.product.name} x${item.quantity} — ${formatPrice(parseFloat(item.product.price || "0") * item.quantity, store.currency)}`
     );
 
     const message = [
@@ -91,7 +91,7 @@ export default function Checkout() {
       `*Order Items:*`,
       ...orderLines,
       ``,
-      `*Total: ${formatPrice(totalPrice)}*`,
+      `*Total: ${formatPrice(totalPrice, store.currency)}*`,
       notes ? `\n*Notes:* ${notes}` : "",
     ]
       .filter(Boolean)
@@ -196,7 +196,7 @@ export default function Checkout() {
                     <p className="text-xs uppercase tracking-wider text-muted-foreground mt-0.5">
                       {getProductCategory(item.product)}
                     </p>
-                    <p className="text-gold font-medium mt-1.5 text-sm">{formatPrice(item.product.price)}</p>
+                    <p className="text-gold font-medium mt-1.5 text-sm">{formatPrice(item.product.price, store.currency)}</p>
                     <div className="flex items-center justify-between mt-3">
                       <div className="flex items-center gap-0 border border-border/40 rounded-lg overflow-hidden">
                         <button
@@ -236,7 +236,7 @@ export default function Checkout() {
                       <span className="text-muted-foreground truncate mr-2">
                         {item.product.name} ×{item.quantity}
                       </span>
-                      <span className="shrink-0">{formatPrice(parseFloat(item.product.price || "0") * item.quantity)}</span>
+                      <span className="shrink-0">{formatPrice(parseFloat(item.product.price || "0") * item.quantity, store.currency)}</span>
                     </div>
                   ))}
                 </div>
@@ -247,7 +247,7 @@ export default function Checkout() {
                   </div>
                   <div className="flex justify-between font-serif text-lg">
                     <span>Total</span>
-                    <span className="text-gold">{formatPrice(totalPrice)}</span>
+                    <span className="text-gold">{formatPrice(totalPrice, store.currency)}</span>
                   </div>
                 </div>
                 <button
@@ -404,7 +404,7 @@ export default function Checkout() {
                       <span className="text-muted-foreground truncate mr-2">
                         {item.product.name} ×{item.quantity}
                       </span>
-                      <span className="shrink-0">{formatPrice(parseFloat(item.product.price || "0") * item.quantity)}</span>
+                      <span className="shrink-0">{formatPrice(parseFloat(item.product.price || "0") * item.quantity, store.currency)}</span>
                     </div>
                   ))}
                 </div>
@@ -415,7 +415,7 @@ export default function Checkout() {
                   </div>
                   <div className="flex justify-between font-serif text-lg">
                     <span>Total</span>
-                    <span className="text-gold">{formatPrice(totalPrice)}</span>
+                    <span className="text-gold">{formatPrice(totalPrice, store.currency)}</span>
                   </div>
                 </div>
 

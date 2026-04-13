@@ -3,6 +3,7 @@ import { useRoute, Link } from "wouter";
 import { ArrowLeft, ShoppingBag, Heart, ChevronDown, ChevronUp } from "lucide-react";
 import { fetchProductBySlug, formatPrice, getProductImage, getProductCategory, stripHtml, type WcProduct } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { useStore } from "@/context/StoreContext";
 import { useToast } from "@/hooks/use-toast";
 
 export default function ProductDetail() {
@@ -12,6 +13,7 @@ export default function ProductDetail() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const { addToCart } = useCart();
+  const store = useStore();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -153,11 +155,11 @@ export default function ProductDetail() {
             >
               {product.on_sale && product.regular_price ? (
                 <>
-                  <span className="text-muted-foreground line-through text-lg">{formatPrice(product.regular_price)}</span>
-                  <span className="text-gold text-2xl font-medium" data-testid="text-product-price">{formatPrice(product.price)}</span>
+                  <span className="text-muted-foreground line-through text-lg">{formatPrice(product.regular_price, store.currency)}</span>
+                  <span className="text-gold text-2xl font-medium" data-testid="text-product-price">{formatPrice(product.price, store.currency)}</span>
                 </>
               ) : (
-                <span className="text-gold text-2xl font-medium" data-testid="text-product-price">{formatPrice(product.price)}</span>
+                <span className="text-gold text-2xl font-medium" data-testid="text-product-price">{formatPrice(product.price, store.currency)}</span>
               )}
             </div>
 
