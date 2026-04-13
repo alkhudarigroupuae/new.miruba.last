@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Settings, Link as LinkIcon, Key, Eye, EyeOff, CheckCircle, XCircle, Loader2, Shield, LogOut, Store, Globe, MessageCircle, Mail, Phone, MapPin, Code } from "lucide-react";
+import { Link as LinkIcon, Key, Eye, EyeOff, CheckCircle, XCircle, Loader2, Shield, LogOut, Store, Globe, MessageCircle, Mail, Phone, MapPin, Code } from "lucide-react";
+import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
 
 function getApiUrl(path: string): string {
   return `/api${path}`;
@@ -151,7 +152,7 @@ export default function Dashboard() {
       });
       const data = await res.json();
       if (data.success) {
-        setMessage({ type: "success", text: "WooCommerce settings saved!" });
+        setMessage({ type: "success", text: data.message || "Store settings saved!" });
         loadSettings();
         loadStats();
       } else {
@@ -255,13 +256,7 @@ export default function Dashboard() {
       <header className="border-b border-border/30">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center">
-              <Settings className="w-5 h-5 text-gold" />
-            </div>
-            <div>
-              <h1 className="font-serif text-lg text-white">Dashboard</h1>
-              <p className="text-xs text-muted-foreground">{storeName || "Store Admin"}</p>
-            </div>
+            <img src={logoImg} alt="Mirruba Jewellery" className="h-11 w-auto" />
           </div>
           <button
             onClick={handleLogout}
@@ -293,7 +288,7 @@ export default function Dashboard() {
             }`}
           >
             <Globe className="w-4 h-4 inline mr-2" />
-            WooCommerce
+            Store API
           </button>
           <button
             onClick={() => setActiveTab("store")}
@@ -313,9 +308,9 @@ export default function Dashboard() {
             <div className="px-6 py-5 border-b border-border/20">
               <h2 className="font-serif text-lg text-white flex items-center gap-2">
                 <LinkIcon className="w-5 h-5 text-gold" />
-                WooCommerce Connection
+                Store Connection
               </h2>
-              <p className="text-sm text-muted-foreground mt-1">Connect any WooCommerce store by entering its URL and API credentials</p>
+              <p className="text-sm text-muted-foreground mt-1">Connect your store by entering its URL and API credentials</p>
             </div>
 
             <form onSubmit={handleSaveWc} className="p-6 space-y-6">

@@ -4,28 +4,28 @@ import { getActiveConfig } from "./settings";
 const router = Router();
 
 interface CacheEntry {
-  data: any;
+  data: unknown;
   timestamp: number;
 }
 
 const cache = new Map<string, CacheEntry>();
 const CACHE_TTL = 5 * 60 * 1000;
 
-function getCached(key: string): any | null {
+function getCached<T>(key: string): T | null {
   const entry = cache.get(key);
   if (!entry) return null;
   if (Date.now() - entry.timestamp > CACHE_TTL) {
     cache.delete(key);
     return null;
   }
-  return entry.data;
+  return entry.data as T;
 }
 
-function setCache(key: string, data: any) {
+function setCache(key: string, data: unknown) {
   cache.set(key, { data, timestamp: Date.now() });
 }
 
-async function wcFetch(endpoint: string, params: Record<string, string> = {}) {
+async function wcFetch<T>(endpoint: string, params: Record<string, string> = {}): Promise<T> {
   const config = getActiveConfig();
   const url = new URL(`/wp-json/wc/v3${endpoint}`, config.storeUrl);
   for (const [k, v] of Object.entries(params)) {
@@ -40,22 +40,22 @@ async function wcFetch(endpoint: string, params: Record<string, string> = {}) {
   if (!res.ok) {
     throw new Error(`WooCommerce API error: ${res.status}`);
   }
-  return res.json();
+  return (await res.json()) as T;
 }
 
-async function wcFetchCached(endpoint: string, params: Record<string, string> = {}) {
+async function wcFetchCached<T>(endpoint: string, params: Record<string, string> = {}) {
   const sortedParams = Object.entries(params).sort(([a], [b]) => a.localeCompare(b));
   const cacheKey = `${endpoint}?${sortedParams.map(([k, v]) => `${k}=${v}`).join("&")}`;
 
-  const cached = getCached(cacheKey);
+  const cached = getCached<T>(cacheKey);
   if (cached) return { data: cached, fromCache: true };
 
-  const data = await wcFetch(endpoint, params);
+  const data = await wcFetch<T>(endpoint, params);
   setCache(cacheKey, data);
   return { data, fromCache: false };
 }
 
-async function wcPost(endpoint: string, body: any) {
+async function wcPost<T>(endpoint: string, body: unknown): Promise<T> {
   const config = getActiveConfig();
   const url = new URL(`/wp-json/wc/v3${endpoint}`, config.storeUrl);
   const credentials = Buffer.from(`${config.consumerKey}:${config.consumerSecret}`).toString("base64");
@@ -71,7 +71,30 @@ async function wcPost(endpoint: string, body: any) {
     const errorText = await res.text();
     throw new Error(`WooCommerce API error: ${res.status} - ${errorText}`);
   }
-  return res.json();
+  return (await res.json()) as T;
+}
+
+interface OrderRequestBody {
+  billing: {
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    phone?: string;
+    address_1?: string;
+    city?: string;
+  };
+  line_items: Array<{
+    product_id: number;
+    quantity: number;
+  }>;
+  customer_note?: string;
+}
+
+interface WcOrderResponse {
+  id: number;
+  payment_url?: string;
+  order_key: string;
+  total: string;
 }
 
 router.get("/wc/products", async (req: Request, res: Response) => {
@@ -118,9 +141,13 @@ router.get("/wc/categories", async (_req: Request, res: Response) => {
 
 router.post("/wc/orders", async (req: Request, res: Response) => {
   try {
-    const { billing, line_items, customer_note } = req.body;
+    const { billing, line_items, customer_note } = req.body as OrderRequestBody;
 
-    const orderData: any = {
+    if (!billing || !Array.isArray(line_items) || line_items.length === 0) {
+      return res.status(400).json({ error: "Invalid order payload" });
+    }
+
+    const orderData = {
       payment_method: "ngenius",
       payment_method_title: "N-Genius Online Payment",
       set_paid: false,
@@ -140,14 +167,14 @@ router.post("/wc/orders", async (req: Request, res: Response) => {
         city: billing.city || "",
         country: "AE",
       },
-      line_items: line_items.map((item: any) => ({
+      line_items: line_items.map((item) => ({
         product_id: item.product_id,
         quantity: item.quantity,
       })),
       customer_note: customer_note || "",
     };
 
-    const order = await wcPost("/orders", orderData);
+    const order = await wcPost<WcOrderResponse>("/orders", orderData);
 
     req.log.info({ order_id: order.id, payment_url: order.payment_url, order_key: order.order_key }, "WooCommerce order created");
 
@@ -159,7 +186,7 @@ router.post("/wc/orders", async (req: Request, res: Response) => {
     }
 
     res.set("Cache-Control", "no-store");
-    res.json({
+    return res.json({
       success: true,
       order_id: order.id,
       order_key: order.order_key,
@@ -168,7 +195,7 @@ router.post("/wc/orders", async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     req.log.error({ err }, "Failed to create WooCommerce order");
-    res.status(500).json({ error: "Failed to create order", details: err.message });
+    return res.status(500).json({ error: "Failed to create order", details: err.message });
   }
 });
 

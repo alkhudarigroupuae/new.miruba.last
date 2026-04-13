@@ -52,10 +52,10 @@ router.post("/newsletter/subscribe", async (req: Request, res: Response) => {
     }
 
     req.log.info({ email }, "Newsletter subscription received");
-    res.json({ success: true, message: "Subscribed successfully" });
+    return res.json({ success: true, message: "Subscribed successfully" });
   } catch (err) {
     req.log.error({ err }, "Newsletter subscription failed");
-    res.status(500).json({ error: "Subscription failed" });
+    return res.status(500).json({ error: "Subscription failed" });
   }
 });
 
