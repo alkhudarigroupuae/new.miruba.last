@@ -95,7 +95,7 @@ export default function Footer() {
             </a>
           </div>
         </div>
-        <div className="text-center mt-3">
+        <div className="text-center mt-6 pb-2">
           <p className="text-xs text-white">
             Developed by <a href="https://mr-appss.com/" target="_blank" rel="noopener noreferrer" className="text-gold hover:text-gold-light transition-colors">Mr Apps</a>
           </p>
