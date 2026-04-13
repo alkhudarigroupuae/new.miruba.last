@@ -3,11 +3,13 @@ import { Link } from "wouter";
 import { ArrowLeft, Trash2, ShoppingBag, Minus, Plus, Send, Loader2, CheckCircle, CreditCard } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useStore } from "@/context/StoreContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { formatPrice, getProductImage, getProductCategory } from "@/data/products";
 
 export default function Checkout() {
   const { items, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
   const store = useStore();
+  const { currency } = useCurrency();
   const [step, setStep] = useState<"cart" | "details" | "success">("cart");
   const [sending, setSending] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"online" | "whatsapp">("online");
@@ -77,7 +79,7 @@ export default function Checkout() {
 
     const orderLines = items.map(
       (item) =>
-        `• ${item.product.name} x${item.quantity} — ${formatPrice(parseFloat(item.product.price || "0") * item.quantity, store.currency)}`
+        `• ${item.product.name} x${item.quantity} — ${formatPrice(parseFloat(item.product.price || "0") * item.quantity, currency)}`
     );
 
     const message = [
@@ -91,7 +93,7 @@ export default function Checkout() {
       `*Order Items:*`,
       ...orderLines,
       ``,
-      `*Total: ${formatPrice(totalPrice, store.currency)}*`,
+      `*Total: ${formatPrice(totalPrice, currency)}*`,
       notes ? `\n*Notes:* ${notes}` : "",
     ]
       .filter(Boolean)
@@ -196,7 +198,7 @@ export default function Checkout() {
                     <p className="text-xs uppercase tracking-wider text-muted-foreground mt-0.5">
                       {getProductCategory(item.product)}
                     </p>
-                    <p className="text-gold font-medium mt-1.5 text-sm">{formatPrice(item.product.price, store.currency)}</p>
+                    <p className="text-gold font-medium mt-1.5 text-sm">{formatPrice(item.product.price, currency)}</p>
                     <div className="flex items-center justify-between mt-3">
                       <div className="flex items-center gap-0 border border-border/40 rounded-lg overflow-hidden">
                         <button
@@ -236,7 +238,7 @@ export default function Checkout() {
                       <span className="text-muted-foreground truncate mr-2">
                         {item.product.name} ×{item.quantity}
                       </span>
-                      <span className="shrink-0">{formatPrice(parseFloat(item.product.price || "0") * item.quantity, store.currency)}</span>
+                      <span className="shrink-0">{formatPrice(parseFloat(item.product.price || "0") * item.quantity, currency)}</span>
                     </div>
                   ))}
                 </div>
@@ -247,7 +249,7 @@ export default function Checkout() {
                   </div>
                   <div className="flex justify-between font-serif text-lg">
                     <span>Total</span>
-                    <span className="text-gold">{formatPrice(totalPrice, store.currency)}</span>
+                    <span className="text-gold">{formatPrice(totalPrice, currency)}</span>
                   </div>
                 </div>
                 <button
@@ -404,7 +406,7 @@ export default function Checkout() {
                       <span className="text-muted-foreground truncate mr-2">
                         {item.product.name} ×{item.quantity}
                       </span>
-                      <span className="shrink-0">{formatPrice(parseFloat(item.product.price || "0") * item.quantity, store.currency)}</span>
+                      <span className="shrink-0">{formatPrice(parseFloat(item.product.price || "0") * item.quantity, currency)}</span>
                     </div>
                   ))}
                 </div>
@@ -415,7 +417,7 @@ export default function Checkout() {
                   </div>
                   <div className="flex justify-between font-serif text-lg">
                     <span>Total</span>
-                    <span className="text-gold">{formatPrice(totalPrice, store.currency)}</span>
+                    <span className="text-gold">{formatPrice(totalPrice, currency)}</span>
                   </div>
                 </div>
 

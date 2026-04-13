@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { useStore } from "@/context/StoreContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { formatPrice, getProductImage, getProductCategory, type WcProduct } from "@/data/products";
 import { useToast } from "@/hooks/use-toast";
 
@@ -12,7 +12,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const { addToCart } = useCart();
-  const store = useStore();
+  const { currency } = useCurrency();
   const { toast } = useToast();
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -55,7 +55,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           <h3 className="font-serif text-sm sm:text-lg group-hover:text-gold transition-colors">
             {product.name}
           </h3>
-          <p className="text-gold font-medium">{formatPrice(product.price, store.currency)}</p>
+          <p className="text-gold font-medium">{formatPrice(product.price, currency)}</p>
         </div>
       </Link>
     </div>

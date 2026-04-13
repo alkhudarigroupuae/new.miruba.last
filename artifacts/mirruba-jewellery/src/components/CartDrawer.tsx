@@ -1,12 +1,12 @@
 import { X, Minus, Plus, Trash2 } from "lucide-react";
 import { Link } from "wouter";
 import { useCart } from "@/context/CartContext";
-import { useStore } from "@/context/StoreContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { formatPrice, getProductImage } from "@/data/products";
 
 export default function CartDrawer() {
   const { items, isCartOpen, setIsCartOpen, removeFromCart, updateQuantity, totalPrice } = useCart();
-  const store = useStore();
+  const { currency } = useCurrency();
 
   if (!isCartOpen) return null;
 
@@ -50,7 +50,7 @@ export default function CartDrawer() {
                   />
                   <div className="flex-1 min-w-0">
                     <h3 className="font-serif text-sm truncate">{item.product.name}</h3>
-                    <p className="text-gold text-sm mt-1">{formatPrice(item.product.price, store.currency)}</p>
+                    <p className="text-gold text-sm mt-1">{formatPrice(item.product.price, currency)}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
@@ -86,7 +86,7 @@ export default function CartDrawer() {
           <div className="p-6 border-t border-border space-y-4">
             <div className="flex items-center justify-between font-serif text-lg">
               <span>Total</span>
-              <span className="text-gold">{formatPrice(totalPrice, store.currency)}</span>
+              <span className="text-gold">{formatPrice(totalPrice, currency)}</span>
             </div>
             <Link
               href="/checkout"
