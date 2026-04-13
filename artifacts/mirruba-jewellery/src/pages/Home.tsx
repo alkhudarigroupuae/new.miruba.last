@@ -134,7 +134,7 @@ function CategoryShowcase() {
     fetchCategories()
       .then((cats) => {
         const jewelrySlugs = ["rings", "earrings", "necklaces", "bracelets", "trending", "accessories"];
-        const filtered = cats.filter((c) => jewelrySlugs.includes(c.slug.toLowerCase()) && c.image);
+        const filtered = cats.filter((c) => jewelrySlugs.includes(c.slug.toLowerCase()));
         setCategories(filtered);
       })
       .catch(() => {});
@@ -157,12 +157,16 @@ function CategoryShowcase() {
               className={`group relative overflow-hidden rounded-lg aspect-[3/4] transition-all duration-700 hover:shadow-[0_0_35px_rgba(231,188,103,0.3)] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
               style={{ transitionDelay: `${i * 150}ms` }}
             >
-              <img
-                src={cat.image?.src || ""}
-                alt={cat.name}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                loading="lazy"
-              />
+              {cat.image ? (
+                <img
+                  src={cat.image.src}
+                  alt={cat.name}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  loading="lazy"
+                />
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-[#2a2523] to-[#1a1614]" />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
                 <h3 className="font-serif text-lg sm:text-xl text-white mb-1">{cat.name}</h3>
