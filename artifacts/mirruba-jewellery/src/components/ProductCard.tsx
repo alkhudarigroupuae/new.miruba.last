@@ -25,12 +25,12 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
 
   return (
     <div
-      className="group opacity-0 animate-fade-in-up rounded-lg transition-shadow duration-500 hover:shadow-[0_0_25px_rgba(231,188,103,0.15)]"
+      className="group opacity-0 animate-fade-in-up"
       style={{ animationDelay: `${index * 100}ms`, animationFillMode: "forwards" }}
       data-testid={`card-product-${product.id}`}
     >
       <Link href={`/product/${product.slug}`} className="block">
-        <div className="relative overflow-hidden rounded-lg bg-muted aspect-square mb-2 sm:mb-4">
+        <div className="relative overflow-hidden rounded-lg bg-muted aspect-square mb-2 sm:mb-4 transition-shadow duration-500 group-hover:shadow-[0_0_25px_rgba(231,188,103,0.15)]">
           <img
             src={getProductImage(product)}
             alt={product.name}
