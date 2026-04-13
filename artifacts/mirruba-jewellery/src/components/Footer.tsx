@@ -55,29 +55,29 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="bg-[#e7bc67] mt-6 sm:mt-10 py-4 sm:py-5">
+      <div className="bg-[#231f20] mt-6 sm:mt-10 py-4 sm:py-5 border-t border-gold/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
-          <p className="text-xs text-background/90">
+          <p className="text-xs text-gold/90">
             &copy; {new Date().getFullYear()} Mirruba Jewellery. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <Link
               href="/terms"
-              className="text-background/80 hover:text-background transition-colors text-sm"
+              className="text-gold/70 hover:text-gold transition-colors text-sm"
               data-testid="link-terms"
             >
               Terms of Service
             </Link>
             <a
               href="#"
-              className="text-background/80 hover:text-background transition-colors text-sm"
+              className="text-gold/70 hover:text-gold transition-colors text-sm"
               data-testid="link-facebook"
             >
               Facebook
             </a>
             <a
               href="#"
-              className="text-background/80 hover:text-background transition-colors text-sm"
+              className="text-gold/70 hover:text-gold transition-colors text-sm"
               data-testid="link-instagram"
             >
               Instagram
@@ -85,8 +85,8 @@ export default function Footer() {
           </div>
         </div>
         <div className="text-center mt-3">
-          <p className="text-xs text-background/70">
-            Developed by <a href="https://mr-appss.com/" target="_blank" rel="noopener noreferrer" className="text-background/90 hover:text-background transition-colors">Mr Apps</a>
+          <p className="text-xs text-gold/60">
+            Developed by <a href="https://mr-appss.com/" target="_blank" rel="noopener noreferrer" className="text-gold/80 hover:text-gold transition-colors">Mr Apps</a>
           </p>
         </div>
       </div>
