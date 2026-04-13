@@ -45,7 +45,7 @@ function HeroSection() {
           An Icon Of Absolute Femininity
         </p>
         <img src={logoImg} alt="Mirruba" className="h-16 sm:h-24 md:h-28 w-auto mx-auto mb-6 opacity-0 animate-fade-in-up brightness-150" style={{ animationDelay: "0.5s", animationFillMode: "forwards" }} />
-        <p className="text-white/70 text-base sm:text-lg mb-10 max-w-xl mx-auto leading-relaxed opacity-0 animate-fade-in-up" style={{ animationDelay: "0.7s", animationFillMode: "forwards" }}>
+        <p className="text-white text-base sm:text-lg mb-10 max-w-xl mx-auto leading-relaxed opacity-0 animate-fade-in-up" style={{ animationDelay: "0.7s", animationFillMode: "forwards" }}>
           We are committed to providing a unique shopping experience with the perfect jewelry pieces that suit your style and preferences.
         </p>
         <Link
