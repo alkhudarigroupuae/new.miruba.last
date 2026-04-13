@@ -6,8 +6,8 @@ export default function Footer() {
   return (
     <footer className="bg-[#231f20] text-foreground/90 pt-8 sm:pt-16 pb-6 sm:pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-12 mb-6 sm:mb-12">
-          <div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-12 mb-6 sm:mb-12 text-center md:text-left">
+          <div className="flex flex-col items-center md:items-start">
             <img src={logoImg} alt="Mirruba Jewellery" className="h-10 w-auto mb-4 brightness-150" />
             <p className="text-sm leading-relaxed text-foreground/90">
               An Icon Of Absolute Femininity. We are committed to providing a unique shopping experience with the perfect jewelry pieces that suit your style.
@@ -16,7 +16,7 @@ export default function Footer() {
 
           <div>
             <h4 className="font-serif text-lg tracking-wider mb-4 text-gold-light">Quick Links</h4>
-            <nav className="grid grid-cols-2 gap-x-6 gap-y-3">
+            <nav className="grid grid-cols-2 gap-x-6 gap-y-3 justify-items-center md:justify-items-start">
               <Link href="/" className="text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-home">
                 Home
               </Link>
@@ -32,7 +32,7 @@ export default function Footer() {
             </nav>
           </div>
 
-          <div>
+          <div className="flex flex-col items-center md:items-start">
             <h4 className="font-serif text-lg tracking-wider mb-4 text-gold-light">Contact</h4>
             <div className="space-y-3">
               <div className="flex items-start gap-3 text-sm text-foreground/80">
