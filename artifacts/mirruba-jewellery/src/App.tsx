@@ -10,6 +10,7 @@ import Home from "@/pages/Home";
 import Shop from "@/pages/Shop";
 import ProductDetail from "@/pages/ProductDetail";
 import Checkout from "@/pages/Checkout";
+import Terms from "@/pages/Terms";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
@@ -35,6 +36,7 @@ function Router() {
         <Route path="/shop" component={Shop} />
         <Route path="/product/:id" component={ProductDetail} />
         <Route path="/checkout" component={Checkout} />
+        <Route path="/terms" component={Terms} />
         <Route component={NotFound} />
       </Switch>
       <Footer />

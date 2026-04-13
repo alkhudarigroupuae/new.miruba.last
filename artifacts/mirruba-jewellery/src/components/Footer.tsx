@@ -60,6 +60,13 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Mirruba Jewellery. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
+            <Link
+              href="/terms"
+              className="text-background/40 hover:text-gold-light transition-colors text-sm"
+              data-testid="link-terms"
+            >
+              Terms of Service
+            </Link>
             <a
               href="#"
               className="text-background/40 hover:text-gold-light transition-colors text-sm"
