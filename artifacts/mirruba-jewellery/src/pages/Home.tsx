@@ -95,7 +95,7 @@ function AboutSection() {
               <img
                 src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop"
                 alt="Luxury jewelry"
-                className="w-full rounded-lg shadow-xl object-cover aspect-[3/4]"
+                className="w-full max-h-[350px] rounded-lg shadow-xl object-cover"
                 loading="lazy"
               />
               <div className="absolute -bottom-6 -left-6 w-32 h-32 border-2 border-gold/30 rounded-lg" />
