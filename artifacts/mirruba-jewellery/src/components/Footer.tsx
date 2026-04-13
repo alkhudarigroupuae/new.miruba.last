@@ -55,7 +55,7 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="bg-[#231f20] mt-6 sm:mt-10 py-4 sm:py-5 border-t border-gold/20">
+      <div className="bg-[#231f20] mt-0 py-4 sm:py-5 border-t border-gold/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <p className="text-xs text-gold/90">
             &copy; {new Date().getFullYear()} Mirruba Jewellery. All rights reserved.
