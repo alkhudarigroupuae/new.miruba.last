@@ -102,8 +102,11 @@ function ValuesSection() {
               className={`text-center p-6 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
               style={{ transitionDelay: `${i * 150}ms` }}
             >
-              <div className="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-6">
-                <div className="w-3 h-3 rounded-full bg-gold" />
+              <div className="w-16 h-16 flex items-center justify-center mx-auto mb-6 relative">
+                <div className="w-8 h-8 rotate-45 bg-gradient-to-br from-gold/80 via-gold-light to-gold/60 animate-diamond-shine shadow-[0_0_15px_rgba(231,188,103,0.3)]" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-10 h-10 rotate-45 border border-gold/20 animate-diamond-shine" style={{ animationDelay: "1s" }} />
+                </div>
               </div>
               <h3 className="font-serif text-xl mb-3">{value.title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{value.description}</p>
