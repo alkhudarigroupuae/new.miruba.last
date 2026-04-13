@@ -122,9 +122,9 @@ function FeaturedSection() {
   }, []);
 
   return (
-    <section className="py-24 bg-muted/30" data-testid="section-featured">
+    <section className="py-12 sm:py-24 bg-muted/30" data-testid="section-featured">
       <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`text-center mb-16 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+        <div className={`text-center mb-8 sm:mb-16 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
           <p className="text-gold tracking-[0.3em] text-xs uppercase mb-4">Our Collections</p>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl mb-4">
             Trending Products
