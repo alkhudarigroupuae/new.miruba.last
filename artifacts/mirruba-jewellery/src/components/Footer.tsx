@@ -16,17 +16,17 @@ export default function Footer() {
 
           <div>
             <h4 className="font-serif text-lg tracking-wider mb-4 text-gold-light">Quick Links</h4>
-            <nav className="space-y-3">
-              <Link href="/" className="block text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-home">
+            <nav className="grid grid-cols-2 gap-x-6 gap-y-3">
+              <Link href="/" className="text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-home">
                 Home
               </Link>
-              <Link href="/shop" className="block text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-shop">
+              <Link href="/shop" className="text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-shop">
                 Shop
               </Link>
-              <Link href="/#about" className="block text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-about">
+              <Link href="/#about" className="text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-about">
                 About
               </Link>
-              <Link href="/#contact" className="block text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-contact">
+              <Link href="/#contact" className="text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-contact">
                 Contact
               </Link>
             </nav>
