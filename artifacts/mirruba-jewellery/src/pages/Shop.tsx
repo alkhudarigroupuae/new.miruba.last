@@ -2,6 +2,61 @@ import { useState, useEffect } from "react";
 import ProductCard from "@/components/ProductCard";
 import { fetchProducts, fetchCategories, type WcProduct, type WcCategory } from "@/data/products";
 
+function CategoryIcon({ slug }: { slug: string }) {
+  const iconClass = "w-5 h-5";
+  switch (slug) {
+    case "rings":
+      return (
+        <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <circle cx="12" cy="14" r="7" />
+          <ellipse cx="12" cy="7" rx="4" ry="2" />
+          <path d="M8 7v3.5M16 7v3.5" />
+          <circle cx="12" cy="5" r="1.5" fill="currentColor" opacity="0.3" />
+        </svg>
+      );
+    case "earrings":
+      return (
+        <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M12 3v4" />
+          <circle cx="12" cy="10" r="3" />
+          <path d="M12 13v2" />
+          <path d="M9 17l3 4 3-4" />
+          <circle cx="12" cy="10" r="1" fill="currentColor" opacity="0.3" />
+        </svg>
+      );
+    case "necklaces":
+      return (
+        <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M4 6c0 0 2-2 8-2s8 2 8 2" />
+          <path d="M4 6c0 6 3 12 8 15c5-3 8-9 8-15" />
+          <path d="M10 16l2 3 2-3" />
+          <circle cx="12" cy="14" r="1.5" fill="currentColor" opacity="0.3" />
+        </svg>
+      );
+    case "bracelets":
+      return (
+        <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <ellipse cx="12" cy="12" rx="9" ry="5" />
+          <ellipse cx="12" cy="12" rx="7" ry="3.5" />
+          <circle cx="6" cy="12" r="1" fill="currentColor" opacity="0.3" />
+          <circle cx="18" cy="12" r="1" fill="currentColor" opacity="0.3" />
+        </svg>
+      );
+    case "trending":
+      return (
+        <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M13 3l4 8h-3l2 10-9-12h4L8 3h5z" />
+        </svg>
+      );
+    default:
+      return (
+        <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z" />
+        </svg>
+      );
+  }
+}
+
 export default function Shop() {
   const [products, setProducts] = useState<WcProduct[]>([]);
   const [categories, setCategories] = useState<WcCategory[]>([]);
@@ -48,20 +103,26 @@ export default function Shop() {
       <section className="py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {categoryNames.map((category) => (
-              <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
-                className={`px-5 py-2 text-sm tracking-[0.1em] uppercase rounded-full transition-all duration-300 ${
-                  activeCategory === category
-                    ? "bg-gold text-white"
-                    : "bg-transparent border border-border text-muted-foreground hover:border-gold hover:text-gold"
-                }`}
-                data-testid={`button-filter-${category.toLowerCase()}`}
-              >
-                {category}
-              </button>
-            ))}
+            {categories.length > 0 && categories.map((cat) => {
+              const isActive = activeCategory === cat.name;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(isActive ? "All" : cat.name)}
+                  className={`flex flex-col items-center gap-1.5 px-4 py-3 min-w-[72px] rounded-xl transition-all duration-300 ${
+                    isActive
+                      ? "bg-gold/15 border border-gold text-gold"
+                      : "bg-transparent border border-border text-muted-foreground hover:border-gold/50 hover:text-gold"
+                  }`}
+                  data-testid={`button-filter-${cat.slug}`}
+                >
+                  <CategoryIcon slug={cat.slug} />
+                  <span className="text-[10px] tracking-[0.08em] uppercase font-medium leading-tight text-center">
+                    {cat.name}
+                  </span>
+                </button>
+              );
+            })}
           </div>
 
           {loading ? (
