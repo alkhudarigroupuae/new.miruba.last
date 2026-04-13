@@ -104,14 +104,14 @@ export default function Navbar() {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden bg-[#231f20] backdrop-blur-md border-t border-white/10 animate-fade-in">
-          <div className="px-4 py-6 space-y-4">
+        <div className="md:hidden fixed inset-0 top-20 bg-[#231f20] z-50 animate-fade-in">
+          <div className="flex flex-col items-center justify-center h-full space-y-8">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => handleNavClick(link.href)}
-                className={`block text-base font-medium tracking-[0.1em] uppercase transition-colors py-2 ${
+                className={`text-2xl font-medium tracking-[0.15em] uppercase transition-colors ${
                   location === link.href ? "text-gold" : "text-foreground/70"
                 }`}
                 data-testid={`link-mobile-${link.label.toLowerCase()}`}

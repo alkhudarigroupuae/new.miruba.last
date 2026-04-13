@@ -30,11 +30,11 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
       data-testid={`card-product-${product.id}`}
     >
       <Link href={`/product/${product.slug}`} className="block">
-        <div className="relative overflow-hidden rounded-lg bg-muted aspect-auto sm:aspect-square mb-4">
+        <div className="relative overflow-hidden rounded-lg bg-muted aspect-square mb-2 sm:mb-4">
           <img
             src={getProductImage(product)}
             alt={product.name}
-            className="w-full h-auto sm:h-full sm:object-cover transition-transform duration-700 group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             loading="lazy"
           />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
@@ -50,7 +50,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
             {getProductCategory(product)}
           </p>
-          <h3 className="font-serif text-lg group-hover:text-gold transition-colors">
+          <h3 className="font-serif text-sm sm:text-lg group-hover:text-gold transition-colors">
             {product.name}
           </h3>
           <p className="text-gold font-medium">{formatPrice(product.price)}</p>
