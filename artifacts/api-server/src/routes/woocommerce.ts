@@ -1,17 +1,15 @@
 import { Router, type Request, type Response } from "express";
+import { getActiveConfig } from "./settings";
 
 const router = Router();
 
-const WC_STORE_URL = process.env.WC_STORE_URL || "https://admin.mirruba-jewellery.com";
-const WC_KEY = process.env.WC_CONSUMER_KEY || "";
-const WC_SECRET = process.env.WC_CONSUMER_SECRET || "";
-
 async function wcFetch(endpoint: string, params: Record<string, string> = {}) {
-  const url = new URL(`/wp-json/wc/v3${endpoint}`, WC_STORE_URL);
+  const config = getActiveConfig();
+  const url = new URL(`/wp-json/wc/v3${endpoint}`, config.storeUrl);
   for (const [k, v] of Object.entries(params)) {
     url.searchParams.set(k, v);
   }
-  const credentials = Buffer.from(`${WC_KEY}:${WC_SECRET}`).toString("base64");
+  const credentials = Buffer.from(`${config.consumerKey}:${config.consumerSecret}`).toString("base64");
   const res = await fetch(url.toString(), {
     headers: {
       Authorization: `Basic ${credentials}`,

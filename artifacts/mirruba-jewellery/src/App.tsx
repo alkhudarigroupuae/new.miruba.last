@@ -13,6 +13,7 @@ import Checkout from "@/pages/Checkout";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import Terms from "@/pages/Terms";
+import Dashboard from "@/pages/Dashboard";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
@@ -27,7 +28,7 @@ function ScrollToTop() {
   return null;
 }
 
-function Router() {
+function MainLayout() {
   return (
     <>
       <ScrollToTop />
@@ -46,6 +47,14 @@ function Router() {
       <Footer />
     </>
   );
+}
+
+function Router() {
+  const [location] = useLocation();
+  if (location === "/dashboard") {
+    return <Dashboard />;
+  }
+  return <MainLayout />;
 }
 
 function App() {
