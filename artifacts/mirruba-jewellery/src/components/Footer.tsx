@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { MapPin, Phone, Mail } from "lucide-react";
+import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
 
 export default function Footer() {
   return (
@@ -7,9 +8,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           <div>
-            <h3 className="font-serif text-2xl tracking-[0.2em] text-gold-light mb-4">
-              MIRRUBA
-            </h3>
+            <img src={logoImg} alt="Mirruba Jewellery" className="h-10 w-auto mb-4 brightness-150" />
             <p className="text-sm leading-relaxed text-background/60">
               An Icon Of Absolute Femininity. We are committed to providing a unique shopping experience with the perfect jewelry pieces that suit your style.
             </p>

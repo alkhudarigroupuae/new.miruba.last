@@ -4,6 +4,7 @@ import { ArrowRight, MapPin, Phone, Mail, Send } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import { getFeaturedProducts } from "@/data/products";
 import { useToast } from "@/hooks/use-toast";
+import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
 
 function useInView(threshold = 0.1) {
   const ref = useRef<HTMLDivElement>(null);
@@ -38,9 +39,7 @@ function HeroSection() {
         <p className="text-gold-light tracking-[0.4em] text-xs sm:text-sm uppercase mb-6 opacity-0 animate-fade-in" style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}>
           An Icon Of Absolute Femininity
         </p>
-        <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl text-white mb-6 leading-tight opacity-0 animate-fade-in-up" style={{ animationDelay: "0.5s", animationFillMode: "forwards" }}>
-          MIRRUBA
-        </h1>
+        <img src={logoImg} alt="Mirruba" className="h-16 sm:h-24 md:h-28 w-auto mx-auto mb-6 opacity-0 animate-fade-in-up brightness-150" style={{ animationDelay: "0.5s", animationFillMode: "forwards" }} />
         <p className="text-white/70 text-base sm:text-lg mb-10 max-w-xl mx-auto leading-relaxed opacity-0 animate-fade-in-up" style={{ animationDelay: "0.7s", animationFillMode: "forwards" }}>
           We are committed to providing a unique shopping experience with the perfect jewelry pieces that suit your style and preferences.
         </p>
@@ -142,14 +141,14 @@ function FeaturedSection() {
 function MarqueeSection() {
   return (
     <section className="py-12 bg-foreground overflow-hidden" data-testid="section-marquee">
-      <div className="flex animate-marquee whitespace-nowrap">
+      <div className="flex animate-marquee whitespace-nowrap items-center">
         {Array.from({ length: 12 }).map((_, i) => (
-          <span
+          <img
             key={i}
-            className="font-serif text-2xl tracking-[0.3em] text-gold-light/30 mx-8"
-          >
-            MIRRUBA
-          </span>
+            src={logoImg}
+            alt="Mirruba"
+            className="h-8 w-auto mx-12 opacity-30 brightness-150"
+          />
         ))}
       </div>
     </section>

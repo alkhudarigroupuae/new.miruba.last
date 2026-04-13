@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -52,10 +53,9 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-20">
           <Link
             href="/"
-            className="font-serif text-2xl sm:text-3xl tracking-[0.2em] text-gold-dark hover:text-gold transition-colors"
             data-testid="link-home-logo"
           >
-            MIRRUBA
+            <img src={logoImg} alt="Mirruba Jewellery" className="h-10 sm:h-12 w-auto" />
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
