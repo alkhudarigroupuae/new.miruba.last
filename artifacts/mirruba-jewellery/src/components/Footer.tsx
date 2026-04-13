@@ -85,8 +85,8 @@ export default function Footer() {
           </div>
         </div>
         <div className="text-center mt-3">
-          <p className="text-xs text-gold/60">
-            Developed by <a href="https://mr-appss.com/" target="_blank" rel="noopener noreferrer" className="text-gold/80 hover:text-gold transition-colors">Mr Apps</a>
+          <p className="text-xs text-white">
+            Developed by <a href="https://mr-appss.com/" target="_blank" rel="noopener noreferrer" className="text-gold hover:text-gold-light transition-colors">Mr Apps</a>
           </p>
         </div>
       </div>
