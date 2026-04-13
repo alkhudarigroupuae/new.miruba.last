@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import { ArrowRight, MapPin, Phone, Mail, Send } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
-import { getFeaturedProducts } from "@/data/products";
+import { fetchProducts, type WcProduct } from "@/data/products";
 import { useToast } from "@/hooks/use-toast";
 import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
 
@@ -104,8 +104,22 @@ function AboutSection() {
 }
 
 function FeaturedSection() {
-  const featured = getFeaturedProducts();
+  const [products, setProducts] = useState<WcProduct[]>([]);
+  const [loading, setLoading] = useState(true);
   const { ref, isVisible } = useInView(0.1);
+
+  useEffect(() => {
+    fetchProducts()
+      .then((prods) => {
+        const jewelryCats = ["rings", "earrings", "necklaces", "bracelets", "trending", "accessories"];
+        const filtered = prods.filter((p) =>
+          p.categories.some((c) => jewelryCats.includes(c.slug.toLowerCase()))
+        );
+        setProducts(filtered.slice(0, 4));
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <section className="py-24 bg-muted/30" data-testid="section-featured">
@@ -116,13 +130,24 @@ function FeaturedSection() {
             Trending Products
           </h2>
         </div>
-        {isVisible && (
+        {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featured.map((product, i) => (
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="animate-pulse">
+                <div className="bg-muted aspect-square rounded-lg mb-4" />
+                <div className="h-3 bg-muted rounded w-1/3 mb-2" />
+                <div className="h-5 bg-muted rounded w-2/3 mb-2" />
+                <div className="h-4 bg-muted rounded w-1/4" />
+              </div>
+            ))}
+          </div>
+        ) : isVisible ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {products.map((product, i) => (
               <ProductCard key={product.id} product={product} index={i} />
             ))}
           </div>
-        )}
+        ) : null}
         <div className="text-center mt-12">
           <Link
             href="/shop"

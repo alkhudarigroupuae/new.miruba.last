@@ -1,7 +1,7 @@
 import { X, Minus, Plus, Trash2 } from "lucide-react";
 import { Link } from "wouter";
 import { useCart } from "@/context/CartContext";
-import { formatPrice } from "@/data/products";
+import { formatPrice, getProductImage } from "@/data/products";
 
 export default function CartDrawer() {
   const { items, isCartOpen, setIsCartOpen, removeFromCart, updateQuantity, totalPrice } = useCart();
@@ -42,7 +42,7 @@ export default function CartDrawer() {
                   data-testid={`cart-item-${item.product.id}`}
                 >
                   <img
-                    src={item.product.image}
+                    src={getProductImage(item.product)}
                     alt={item.product.name}
                     className="w-20 h-20 object-cover rounded"
                   />

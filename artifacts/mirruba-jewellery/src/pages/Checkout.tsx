@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { ArrowLeft, Trash2, ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { formatPrice } from "@/data/products";
+import { formatPrice, getProductImage, getProductCategory } from "@/data/products";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Checkout() {
@@ -56,14 +56,14 @@ export default function Checkout() {
                   data-testid={`checkout-item-${item.product.id}`}
                 >
                   <img
-                    src={item.product.image}
+                    src={getProductImage(item.product)}
                     alt={item.product.name}
                     className="w-24 h-24 object-cover rounded"
                   />
                   <div className="flex-1 min-w-0">
                     <h3 className="font-serif text-lg">{item.product.name}</h3>
                     <p className="text-xs uppercase tracking-wider text-muted-foreground mt-1">
-                      {item.product.category}
+                      {getProductCategory(item.product)}
                     </p>
                     <p className="text-gold font-medium mt-2">{formatPrice(item.product.price)}</p>
                     <div className="flex items-center justify-between mt-4">

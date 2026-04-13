@@ -1,10 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProductCard from "@/components/ProductCard";
-import { getProductsByCategory, categories } from "@/data/products";
+import { fetchProducts, fetchCategories, type WcProduct, type WcCategory } from "@/data/products";
 
 export default function Shop() {
+  const [products, setProducts] = useState<WcProduct[]>([]);
+  const [categories, setCategories] = useState<WcCategory[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>("All");
-  const filteredProducts = getProductsByCategory(activeCategory);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      fetchProducts(),
+      fetchCategories(),
+    ])
+      .then(([prods, cats]) => {
+        const jewelryProductCats = ["rings", "earrings", "necklaces", "bracelets", "trending", "accessories"];
+        const filteredProds = prods.filter((p) =>
+          p.categories.some((c) => jewelryProductCats.includes(c.slug.toLowerCase()))
+        );
+        setProducts(filteredProds);
+        const jewelryCategories = ["rings", "earrings", "necklaces", "bracelets", "trending", "accessories"];
+        const validCats = cats.filter((c) => jewelryCategories.includes(c.slug.toLowerCase()));
+        setCategories(validCats);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filteredProducts =
+    activeCategory === "All"
+      ? products
+      : products.filter((p) =>
+          p.categories.some((c) => c.name === activeCategory)
+        );
+
+  const categoryNames = ["All", ...categories.map((c) => c.name)];
 
   return (
     <main className="pt-24 pb-16 min-h-screen" data-testid="page-shop">
@@ -15,7 +45,7 @@ export default function Shop() {
         </div>
 
         <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categories.map((category) => (
+          {categoryNames.map((category) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
@@ -31,13 +61,26 @@ export default function Shop() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {filteredProducts.map((product, i) => (
-            <ProductCard key={product.id} product={product} index={i} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <div key={i} className="animate-pulse">
+                <div className="bg-muted aspect-square rounded-lg mb-4" />
+                <div className="h-3 bg-muted rounded w-1/3 mb-2" />
+                <div className="h-5 bg-muted rounded w-2/3 mb-2" />
+                <div className="h-4 bg-muted rounded w-1/4" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {filteredProducts.map((product, i) => (
+              <ProductCard key={product.id} product={product} index={i} />
+            ))}
+          </div>
+        )}
 
-        {filteredProducts.length === 0 && (
+        {!loading && filteredProducts.length === 0 && (
           <div className="text-center py-16 text-muted-foreground">
             <p className="font-serif text-lg">No products found in this category.</p>
           </div>

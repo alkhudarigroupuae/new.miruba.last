@@ -1,14 +1,43 @@
+import { useState, useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import { ArrowLeft, ShoppingBag, Heart } from "lucide-react";
-import { getProductById, formatPrice } from "@/data/products";
+import { fetchProductBySlug, formatPrice, getProductImage, getProductCategory, stripHtml, type WcProduct } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 
 export default function ProductDetail() {
-  const [, params] = useRoute("/product/:id");
-  const product = params?.id ? getProductById(params.id) : null;
+  const [, params] = useRoute("/product/:slug");
+  const [product, setProduct] = useState<WcProduct | null>(null);
+  const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (!params?.slug) return;
+    fetchProductBySlug(params.slug)
+      .then(setProduct)
+      .catch(() => setProduct(null))
+      .finally(() => setLoading(false));
+  }, [params?.slug]);
+
+  if (loading) {
+    return (
+      <main className="pt-24 pb-16 min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mt-12">
+            <div className="animate-pulse bg-muted aspect-square rounded-lg" />
+            <div className="animate-pulse space-y-4">
+              <div className="h-4 bg-muted rounded w-1/4" />
+              <div className="h-8 bg-muted rounded w-2/3" />
+              <div className="h-6 bg-muted rounded w-1/3" />
+              <div className="h-20 bg-muted rounded w-full mt-8" />
+              <div className="h-12 bg-muted rounded w-full mt-8" />
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   if (!product) {
     return (
@@ -36,6 +65,8 @@ export default function ProductDetail() {
     });
   };
 
+  const description = stripHtml(product.description || product.short_description || "");
+
   return (
     <main className="pt-24 pb-16 min-h-screen" data-testid="page-product-detail">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -52,26 +83,53 @@ export default function ProductDetail() {
           <div className="opacity-0 animate-fade-in" style={{ animationDelay: "0.1s", animationFillMode: "forwards" }}>
             <div className="relative overflow-hidden rounded-lg bg-muted aspect-square">
               <img
-                src={product.image}
+                src={getProductImage(product)}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
+              {product.on_sale && (
+                <span className="absolute top-4 left-4 bg-destructive text-white text-xs px-3 py-1 rounded-full uppercase tracking-wider">
+                  Sale
+                </span>
+              )}
             </div>
+            {product.images.length > 1 && (
+              <div className="grid grid-cols-4 gap-3 mt-4">
+                {product.images.slice(0, 4).map((img) => (
+                  <img
+                    key={img.id}
+                    src={img.src}
+                    alt={img.alt || product.name}
+                    className="w-full aspect-square object-cover rounded border border-border"
+                    loading="lazy"
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}>
             <p className="text-gold tracking-[0.3em] text-xs uppercase mb-3">
-              {product.category}
+              {getProductCategory(product)}
             </p>
             <h1 className="font-serif text-3xl sm:text-4xl mb-4" data-testid="text-product-name">
               {product.name}
             </h1>
-            <p className="text-gold text-2xl font-medium mb-8" data-testid="text-product-price">
-              {formatPrice(product.price)}
-            </p>
-            <p className="text-muted-foreground leading-relaxed mb-10" data-testid="text-product-description">
-              {product.description}
-            </p>
+            <div className="flex items-center gap-3 mb-8">
+              {product.on_sale && product.regular_price ? (
+                <>
+                  <span className="text-muted-foreground line-through text-lg">{formatPrice(product.regular_price)}</span>
+                  <span className="text-gold text-2xl font-medium" data-testid="text-product-price">{formatPrice(product.price)}</span>
+                </>
+              ) : (
+                <span className="text-gold text-2xl font-medium" data-testid="text-product-price">{formatPrice(product.price)}</span>
+              )}
+            </div>
+            {description && (
+              <p className="text-muted-foreground leading-relaxed mb-10" data-testid="text-product-description">
+                {description}
+              </p>
+            )}
 
             <div className="flex gap-4 mb-8">
               <button
@@ -94,11 +152,17 @@ export default function ProductDetail() {
             <div className="border-t border-border pt-8 space-y-4">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Category</span>
-                <span>{product.category}</span>
+                <span>{getProductCategory(product)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Material</span>
-                <span>18K Gold</span>
+                <span className="text-muted-foreground">SKU</span>
+                <span>{(product as any).sku || "N/A"}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Availability</span>
+                <span className={product.stock_status === "instock" ? "text-green-600" : "text-destructive"}>
+                  {product.stock_status === "instock" ? "In Stock" : "Out of Stock"}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Shipping</span>

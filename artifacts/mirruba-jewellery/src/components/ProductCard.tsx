@@ -1,11 +1,11 @@
 import { Link } from "wouter";
 import { ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { formatPrice, type Product } from "@/data/products";
+import { formatPrice, getProductImage, getProductCategory, type WcProduct } from "@/data/products";
 import { useToast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
-  product: Product;
+  product: WcProduct;
   index?: number;
 }
 
@@ -29,10 +29,10 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
       style={{ animationDelay: `${index * 100}ms`, animationFillMode: "forwards" }}
       data-testid={`card-product-${product.id}`}
     >
-      <Link href={`/product/${product.id}`} className="block">
+      <Link href={`/product/${product.slug}`} className="block">
         <div className="relative overflow-hidden rounded-lg bg-muted aspect-square mb-4">
           <img
-            src={product.image}
+            src={getProductImage(product)}
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             loading="lazy"
@@ -48,7 +48,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
         </div>
         <div className="space-y-1">
           <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-            {product.category}
+            {getProductCategory(product)}
           </p>
           <h3 className="font-serif text-lg group-hover:text-gold transition-colors">
             {product.name}
