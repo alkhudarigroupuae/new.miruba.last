@@ -165,7 +165,7 @@ function FeaturedSection() {
 
 function MarqueeSection() {
   return (
-    <section className="py-12 bg-foreground overflow-hidden" data-testid="section-marquee">
+    <section className="py-12 bg-black/30 overflow-hidden" data-testid="section-marquee">
       <div className="flex animate-marquee whitespace-nowrap items-center">
         {Array.from({ length: 12 }).map((_, i) => (
           <img
