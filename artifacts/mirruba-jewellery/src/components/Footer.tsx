@@ -54,8 +54,9 @@ export default function Footer() {
             </div>
           </div>
         </div>
-
-        <div className="border-t border-background/10 pt-4 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+      </div>
+      <div className="bg-[#231f20] mt-6 sm:mt-10 py-4 sm:py-5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <p className="text-xs text-background/40">
             &copy; {new Date().getFullYear()} Mirruba Jewellery. All rights reserved.
           </p>
@@ -83,7 +84,7 @@ export default function Footer() {
             </a>
           </div>
         </div>
-        <div className="text-center mt-3 sm:mt-6">
+        <div className="text-center mt-3">
           <p className="text-xs text-background/30">
             Developed by <a href="https://mr-appss.com/" target="_blank" rel="noopener noreferrer" className="text-gold-light/50 hover:text-gold transition-colors">Mr Apps</a>
           </p>
