@@ -6,6 +6,7 @@ const router = Router();
 
 const CONFIG_PATH = path.join(process.cwd(), ".wc-config.json");
 const ALLOW_FILE_CONFIG = process.env.NODE_ENV !== "production" || process.env.ALLOW_FILE_CONFIG === "true";
+let runtimeConfigOverride: Partial<WcConfig> | null = null;
 
 interface StoreSettings {
   storeName: string;
@@ -43,25 +44,32 @@ function readConfig(): WcConfig {
     consumerSecret: process.env.WC_CONSUMER_SECRET || "",
   };
 
+  const applyRuntimeOverride = (base: WcConfig): WcConfig => ({
+    ...base,
+    ...(runtimeConfigOverride || {}),
+    store: runtimeConfigOverride?.store ?? base.store,
+  });
+
   if (!ALLOW_FILE_CONFIG) {
-    return envConfig;
+    return applyRuntimeOverride(envConfig);
   }
 
   try {
     if (fs.existsSync(CONFIG_PATH)) {
       const raw = fs.readFileSync(CONFIG_PATH, "utf-8");
       const fileConfig = JSON.parse(raw) as Partial<WcConfig>;
-      return {
+      return applyRuntimeOverride({
         ...envConfig,
         ...fileConfig,
         store: fileConfig.store,
-      };
+      });
     }
   } catch {}
-  return envConfig;
+  return applyRuntimeOverride(envConfig);
 }
 
 function writeConfig(config: WcConfig): void {
+  runtimeConfigOverride = config;
   if (!ALLOW_FILE_CONFIG) {
     return;
   }
