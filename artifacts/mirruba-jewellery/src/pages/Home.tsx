@@ -24,14 +24,19 @@ function useInView(threshold = 0.1) {
   return { ref, isVisible };
 }
 
+const HERO_IMAGE = "https://www.mirruba-jewellery.com/static/media/jewellery-girl-welcome-row-1(2).f8dd553f2bb225f4ee47.png";
+
 function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden" data-testid="section-hero">
+    <section className="relative min-h-screen md:min-h-screen flex items-center justify-center overflow-hidden" data-testid="section-hero">
+      <img
+        src={HERO_IMAGE}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover object-top md:hidden"
+      />
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: "url('https://www.mirruba-jewellery.com/static/media/jewellery-girl-welcome-row-1(2).f8dd553f2bb225f4ee47.png')",
-        }}
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden md:block"
+        style={{ backgroundImage: `url('${HERO_IMAGE}')` }}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
 
