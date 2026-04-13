@@ -123,18 +123,21 @@ function FeaturedSection() {
 }
 
 function CategoryShowcase() {
-  const { ref, isVisible } = useInView(0.1);
+  const { ref, isVisible } = useInView(0.05);
   const [categories, setCategories] = useState<WcCategory[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchCategories()
       .then((cats) => {
-        setCategories(cats.filter((c) => c.slug !== "uncategorized" && c.slug !== "all"));
+        const filtered = cats.filter((c) => c.slug !== "uncategorized");
+        setCategories(filtered);
       })
-      .catch(() => {});
+      .catch((err) => console.error("Failed to load categories:", err))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (categories.length === 0) return null;
+  if (!loading && categories.length === 0) return null;
 
   return (
     <section className="py-16 sm:py-24 bg-background" data-testid="section-categories">
@@ -143,34 +146,42 @@ function CategoryShowcase() {
           <p className="text-gold tracking-[0.3em] text-xs uppercase mb-4">Explore</p>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl mb-4">Shop By Category</h2>
         </div>
-        <div className={`grid grid-cols-2 ${categories.length >= 4 ? "lg:grid-cols-4" : categories.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-2"} gap-4 sm:gap-6`}>
-          {categories.map((cat, i) => (
-            <Link
-              key={cat.slug}
-              href="/shop"
-              className={`group relative overflow-hidden rounded-lg aspect-[3/4] transition-all duration-700 hover:shadow-[0_0_35px_rgba(231,188,103,0.3)] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-              style={{ transitionDelay: `${i * 150}ms` }}
-            >
-              {cat.image ? (
-                <img
-                  src={cat.image.src}
-                  alt={cat.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  loading="lazy"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-[#2a2523] to-[#1a1614]" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
-                <h3 className="font-serif text-lg sm:text-xl text-white mb-1">{cat.name}</h3>
-                <span className="text-gold-light text-xs tracking-[0.15em] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300 inline-flex items-center gap-1">
-                  Explore <ArrowRight className="w-3 h-3" />
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
+        {loading ? (
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="rounded-lg aspect-[3/4] bg-[#2a2523] animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className={`grid grid-cols-2 ${categories.length >= 4 ? "lg:grid-cols-3" : categories.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-2"} gap-4 sm:gap-6`}>
+            {categories.map((cat, i) => (
+              <Link
+                key={cat.id}
+                href="/shop"
+                className={`group relative overflow-hidden rounded-lg aspect-[3/4] transition-all duration-700 hover:shadow-[0_0_35px_rgba(231,188,103,0.3)] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+                style={{ transitionDelay: `${i * 150}ms` }}
+              >
+                {cat.image ? (
+                  <img
+                    src={cat.image.src}
+                    alt={cat.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#2a2523] to-[#1a1614]" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+                  <h3 className="font-serif text-lg sm:text-xl text-white mb-1">{cat.name}</h3>
+                  <span className="text-gold-light text-xs tracking-[0.15em] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300 inline-flex items-center gap-1">
+                    Explore <ArrowRight className="w-3 h-3" />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
