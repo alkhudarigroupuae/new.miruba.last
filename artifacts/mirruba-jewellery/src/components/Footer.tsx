@@ -4,9 +4,9 @@ import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_17760814548
 
 export default function Footer() {
   return (
-    <footer className="bg-foreground text-background/90 pt-16 pb-8">
+    <footer className="bg-foreground text-background/90 pt-8 sm:pt-16 pb-6 sm:pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-12 mb-6 sm:mb-12">
           <div>
             <img src={logoImg} alt="Mirruba Jewellery" className="h-10 w-auto mb-4 brightness-150" />
             <p className="text-sm leading-relaxed text-background/60">
@@ -55,7 +55,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-background/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="border-t border-background/10 pt-4 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <p className="text-xs text-background/40">
             &copy; {new Date().getFullYear()} Mirruba Jewellery. All rights reserved.
           </p>
@@ -83,7 +83,7 @@ export default function Footer() {
             </a>
           </div>
         </div>
-        <div className="text-center mt-6">
+        <div className="text-center mt-3 sm:mt-6">
           <p className="text-xs text-background/30">
             Developed by <a href="https://mr-appss.com/" target="_blank" rel="noopener noreferrer" className="text-gold-light/50 hover:text-gold transition-colors">Mr Apps</a>
           </p>
