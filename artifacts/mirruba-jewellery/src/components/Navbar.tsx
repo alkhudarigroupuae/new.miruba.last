@@ -23,22 +23,9 @@ export default function Navbar() {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/shop", label: "Shop" },
-    { href: "/#about", label: "About" },
-    { href: "/#contact", label: "Contact" },
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
   ];
-
-  const handleNavClick = (href: string) => {
-    if (href.startsWith("/#")) {
-      const id = href.replace("/#", "");
-      if (location === "/") {
-        const el = document.getElementById(id);
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth" });
-          return;
-        }
-      }
-    }
-  };
 
   return (
     <nav
@@ -63,7 +50,6 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => handleNavClick(link.href)}
                 className={`text-sm font-medium tracking-[0.15em] uppercase transition-colors hover:text-gold ${
                   location === link.href ? "text-gold" : "text-foreground/70"
                 }`}
@@ -110,7 +96,6 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => handleNavClick(link.href)}
                 className={`text-2xl font-serif tracking-[0.15em] uppercase transition-colors ${
                   location === link.href ? "text-gold" : "text-white/80 hover:text-gold"
                 }`}

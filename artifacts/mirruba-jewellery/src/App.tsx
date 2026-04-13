@@ -10,6 +10,8 @@ import Home from "@/pages/Home";
 import Shop from "@/pages/Shop";
 import ProductDetail from "@/pages/ProductDetail";
 import Checkout from "@/pages/Checkout";
+import About from "@/pages/About";
+import Contact from "@/pages/Contact";
 import Terms from "@/pages/Terms";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
@@ -36,6 +38,8 @@ function Router() {
         <Route path="/shop" component={Shop} />
         <Route path="/product/:slug" component={ProductDetail} />
         <Route path="/checkout" component={Checkout} />
+        <Route path="/about" component={About} />
+        <Route path="/contact" component={Contact} />
         <Route path="/terms" component={Terms} />
         <Route component={NotFound} />
       </Switch>

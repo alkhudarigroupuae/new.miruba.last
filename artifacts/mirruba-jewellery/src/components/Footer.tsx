@@ -23,10 +23,10 @@ export default function Footer() {
               <Link href="/shop" className="text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-shop">
                 Shop
               </Link>
-              <Link href="/#about" className="text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-about">
+              <Link href="/about" className="text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-about">
                 About
               </Link>
-              <Link href="/#contact" className="text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-contact">
+              <Link href="/contact" className="text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-contact">
                 Contact
               </Link>
             </nav>

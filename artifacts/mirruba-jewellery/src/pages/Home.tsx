@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
-import { ArrowRight, MapPin, Phone, Mail, Send } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import { fetchProducts, type WcProduct } from "@/data/products";
-import { useToast } from "@/hooks/use-toast";
 import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
 import mobileBannerImg from "@assets/Untitled_design_(3)_1776088697980.jpg";
 
@@ -62,48 +61,6 @@ function HeroSection() {
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
         <div className="w-px h-16 bg-gradient-to-b from-transparent to-gold-light/50 animate-pulse" />
-      </div>
-    </section>
-  );
-}
-
-function AboutSection() {
-  const { ref, isVisible } = useInView(0.2);
-
-  return (
-    <section id="about" className="py-24 bg-background" data-testid="section-about">
-      <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className={`transition-all duration-1000 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"}`}>
-            <p className="text-gold tracking-[0.3em] text-xs uppercase mb-4">Our Story</p>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl mb-6 leading-tight">
-              An Icon Of<br />Absolute Femininity
-            </h2>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              It reflects the life of a solid, independent woman of rare beauty.
-              An uncontrollable force awakens in you, enchants you, and takes you
-              to a world of irresistible femininity and attractiveness. Succumb to her
-              call; you have no resemblance but your mirror.
-            </p>
-            <p className="text-muted-foreground leading-relaxed">
-              Through our website, you will be able to find the perfect jewelry pieces
-              that suit your style and preferences, whether you are searching for a
-              special gift or looking to add a touch of luxury to your jewelry collection.
-            </p>
-          </div>
-          <div className={`transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"}`}>
-            <div className="relative">
-              <img
-                src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop"
-                alt="Luxury jewelry"
-                className="w-full max-h-[350px] rounded-lg shadow-xl object-cover"
-                loading="lazy"
-              />
-              <div className="absolute -bottom-6 -left-6 w-32 h-32 border-2 border-gold/30 rounded-lg" />
-              <div className="absolute -top-6 -right-6 w-32 h-32 border-2 border-gold/30 rounded-lg" />
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );
@@ -186,133 +143,12 @@ function MarqueeSection() {
   );
 }
 
-function ContactSection() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const { toast } = useToast();
-  const { ref, isVisible } = useInView(0.1);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({
-      title: "Message sent",
-      description: "Thank you for contacting us. We will get back to you soon.",
-    });
-    setName("");
-    setEmail("");
-    setMessage("");
-  };
-
-  return (
-    <section id="contact" className="py-24 bg-background" data-testid="section-contact">
-      <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`text-center mb-16 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-          <p className="text-gold tracking-[0.3em] text-xs uppercase mb-4">Get In Touch</p>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl mb-4">
-            Contact Us
-          </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            Ready to turn your ideas into reality? Let's talk! We're here to
-            listen, guide, and help you bring your vision to life.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          <div className={`space-y-8 transition-all duration-700 delay-200 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"}`}>
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
-                <MapPin className="w-5 h-5 text-gold" />
-              </div>
-              <div>
-                <h4 className="font-serif text-lg mb-1">Visit Us</h4>
-                <p className="text-muted-foreground text-sm">Sharjah, Emirates, Central Market</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
-                <Phone className="w-5 h-5 text-gold" />
-              </div>
-              <div>
-                <h4 className="font-serif text-lg mb-1">Call Us</h4>
-                <a href="tel:+971501045496" className="text-muted-foreground text-sm hover:text-gold transition-colors">
-                  +971 501 045 496
-                </a>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
-                <Mail className="w-5 h-5 text-gold" />
-              </div>
-              <div>
-                <h4 className="font-serif text-lg mb-1">Email Us</h4>
-                <a href="mailto:contact@mirruba-jewellery.com" className="text-muted-foreground text-sm hover:text-gold transition-colors">
-                  contact@mirruba-jewellery.com
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <form
-            onSubmit={handleSubmit}
-            className={`space-y-6 transition-all duration-700 delay-400 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"}`}
-          >
-            <div>
-              <input
-                type="text"
-                placeholder="Your Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="w-full bg-transparent border-b border-border py-3 px-0 text-sm focus:outline-none focus:border-gold transition-colors placeholder:text-muted-foreground/50"
-                data-testid="input-name"
-              />
-            </div>
-            <div>
-              <input
-                type="email"
-                placeholder="Your Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full bg-transparent border-b border-border py-3 px-0 text-sm focus:outline-none focus:border-gold transition-colors placeholder:text-muted-foreground/50"
-                data-testid="input-email"
-              />
-            </div>
-            <div>
-              <textarea
-                placeholder="Your Message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                required
-                rows={4}
-                className="w-full bg-transparent border-b border-border py-3 px-0 text-sm focus:outline-none focus:border-gold transition-colors resize-none placeholder:text-muted-foreground/50"
-                data-testid="input-message"
-              />
-            </div>
-            <button
-              type="submit"
-              className="inline-flex items-center gap-2 bg-gold text-white px-8 py-3 tracking-[0.15em] uppercase text-sm font-medium hover:bg-gold-dark transition-all duration-300 rounded"
-              data-testid="button-send-message"
-            >
-              <Send className="w-4 h-4" />
-              Send Message
-            </button>
-          </form>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export default function Home() {
   return (
     <main>
       <HeroSection />
-      <AboutSection />
       <FeaturedSection />
       <MarqueeSection />
-      <ContactSection />
     </main>
   );
 }
