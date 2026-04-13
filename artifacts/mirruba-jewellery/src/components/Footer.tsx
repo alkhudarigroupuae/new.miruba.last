@@ -83,6 +83,11 @@ export default function Footer() {
             </a>
           </div>
         </div>
+        <div className="text-center mt-6">
+          <p className="text-xs text-background/30">
+            Developed by <span className="text-gold-light/50">Mr Apps</span>
+          </p>
+        </div>
       </div>
     </footer>
   );
