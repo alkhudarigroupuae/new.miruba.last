@@ -5,6 +5,7 @@ import ProductCard from "@/components/ProductCard";
 import { fetchProducts, type WcProduct } from "@/data/products";
 import { useToast } from "@/hooks/use-toast";
 import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
+import mobileBannerImg from "@assets/Untitled_design_(3)_1776088488510.jpg";
 
 function useInView(threshold = 0.1) {
   const ref = useRef<HTMLDivElement>(null);
@@ -30,9 +31,9 @@ function HeroSection() {
   return (
     <section className="relative min-h-screen md:min-h-screen flex items-center justify-center overflow-hidden" data-testid="section-hero">
       <img
-        src={HERO_IMAGE}
+        src={mobileBannerImg}
         alt=""
-        className="absolute inset-0 w-full h-full object-cover object-top md:hidden"
+        className="absolute inset-0 w-full h-full object-cover object-center md:hidden"
       />
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden md:block"
