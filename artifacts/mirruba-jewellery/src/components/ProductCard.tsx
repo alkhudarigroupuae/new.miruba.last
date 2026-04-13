@@ -25,7 +25,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
 
   return (
     <div
-      className="group opacity-0 animate-fade-in-up"
+      className="group opacity-0 animate-fade-in-up rounded-lg transition-shadow duration-500 hover:shadow-[0_0_25px_rgba(231,188,103,0.15)]"
       style={{ animationDelay: `${index * 100}ms`, animationFillMode: "forwards" }}
       data-testid={`card-product-${product.id}`}
     >
