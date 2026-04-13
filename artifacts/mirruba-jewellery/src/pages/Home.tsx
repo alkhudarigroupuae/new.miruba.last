@@ -38,7 +38,7 @@ function HeroSection() {
         className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden md:block"
         style={{ backgroundImage: `url('${HERO_IMAGE}')` }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40" />
 
       <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
         <p className="text-gold-light tracking-[0.4em] text-xs sm:text-sm uppercase mb-6 opacity-0 animate-fade-in" style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}>
