@@ -30,3 +30,8 @@ externalPort = 80
 [[ports]]
 localPort = 23879
 externalPort = 3000
+
+[userenv]
+
+[userenv.shared]
+WC_STORE_URL = "https://admin.mirruba-jewellery.com"
