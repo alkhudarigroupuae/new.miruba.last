@@ -126,6 +126,49 @@ function FeaturedSection() {
   );
 }
 
+function AboutPreview() {
+  const { ref, isVisible } = useInView(0.2);
+
+  return (
+    <section className="py-16 sm:py-24 bg-background" data-testid="section-about-preview">
+      <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+          <div className={`transition-all duration-1000 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"}`}>
+            <p className="text-gold tracking-[0.3em] text-xs uppercase mb-4">Who We Are</p>
+            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl mb-5 leading-tight">
+              An Icon Of<br />Absolute Femininity
+            </h2>
+            <p className="text-muted-foreground leading-relaxed mb-6 text-sm sm:text-base">
+              It reflects the life of a solid, independent woman of rare beauty.
+              An uncontrollable force awakens in you, enchants you, and takes you
+              to a world of irresistible femininity and attractiveness.
+            </p>
+            <Link
+              href="/about"
+              className="inline-flex items-center gap-2 text-gold hover:text-gold-dark transition-colors tracking-[0.15em] uppercase text-sm font-medium"
+            >
+              Read More
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className={`transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"}`}>
+            <div className="relative">
+              <img
+                src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop"
+                alt="Luxury jewelry"
+                className="w-full max-h-[280px] sm:max-h-[320px] rounded-lg shadow-xl object-cover"
+                loading="lazy"
+              />
+              <div className="absolute -bottom-4 -left-4 w-24 h-24 border-2 border-gold/30 rounded-lg hidden sm:block" />
+              <div className="absolute -top-4 -right-4 w-24 h-24 border-2 border-gold/30 rounded-lg hidden sm:block" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function MarqueeSection() {
   return (
     <section className="py-12 bg-black/10 overflow-hidden" data-testid="section-marquee">
@@ -148,6 +191,7 @@ export default function Home() {
     <main>
       <HeroSection />
       <FeaturedSection />
+      <AboutPreview />
       <MarqueeSection />
     </main>
   );
