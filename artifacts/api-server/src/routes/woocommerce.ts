@@ -9,7 +9,22 @@ interface CacheEntry {
 }
 
 const cache = new Map<string, CacheEntry>();
-const CACHE_TTL = 5 * 60 * 1000;
+const CACHE_TTL = 60 * 1000;
+const ADMIN_PASSWORD = process.env.SESSION_SECRET || "admin123";
+
+function requireAdminToken(req: Request, res: Response): boolean {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    res.status(401).json({ error: "Unauthorized" });
+    return false;
+  }
+  const token = authHeader.slice(7);
+  if (token !== ADMIN_PASSWORD) {
+    res.status(401).json({ error: "Invalid credentials" });
+    return false;
+  }
+  return true;
+}
 
 function getCached<T>(key: string): T | null {
   const entry = cache.get(key);
@@ -107,7 +122,7 @@ router.get("/wc/products", async (req: Request, res: Response) => {
     if (req.query.slug) params.slug = String(req.query.slug);
     const { data, fromCache } = await wcFetchCached("/products", params);
     res.set("X-Cache", fromCache ? "HIT" : "MISS");
-    res.set("Cache-Control", "public, max-age=300");
+    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=30");
     res.json(data);
   } catch (err) {
     req.log.error({ err }, "Failed to fetch WooCommerce products");
@@ -119,7 +134,7 @@ router.get("/wc/products/:id", async (req: Request, res: Response) => {
   try {
     const { data, fromCache } = await wcFetchCached(`/products/${req.params.id}`);
     res.set("X-Cache", fromCache ? "HIT" : "MISS");
-    res.set("Cache-Control", "public, max-age=300");
+    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=30");
     res.json(data);
   } catch (err) {
     req.log.error({ err }, "Failed to fetch WooCommerce product");
@@ -131,7 +146,7 @@ router.get("/wc/categories", async (_req: Request, res: Response) => {
   try {
     const { data, fromCache } = await wcFetchCached("/products/categories", { per_page: "100" });
     res.set("X-Cache", fromCache ? "HIT" : "MISS");
-    res.set("Cache-Control", "public, max-age=300");
+    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=30");
     res.json(data);
   } catch (err) {
     _req.log.error({ err }, "Failed to fetch WooCommerce categories");
@@ -200,6 +215,7 @@ router.post("/wc/orders", async (req: Request, res: Response) => {
 });
 
 router.post("/wc/cache/clear", async (_req: Request, res: Response) => {
+  if (!requireAdminToken(_req, res)) return;
   cache.clear();
   res.json({ success: true, message: "Cache cleared" });
 });

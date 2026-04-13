@@ -6,8 +6,11 @@ export function useProducts(params: Record<string, string> = {}) {
   return useQuery<WcProduct[]>({
     queryKey: key,
     queryFn: () => fetchProducts(params),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 60 * 1000,
     gcTime: 10 * 60 * 1000,
+    refetchInterval: 60 * 1000,
+    refetchIntervalInBackground: false,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -15,7 +18,10 @@ export function useCategories() {
   return useQuery<WcCategory[]>({
     queryKey: ["categories"],
     queryFn: fetchCategories,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 60 * 1000,
     gcTime: 10 * 60 * 1000,
+    refetchInterval: 60 * 1000,
+    refetchIntervalInBackground: false,
+    refetchOnWindowFocus: true,
   });
 }

@@ -5,6 +5,7 @@ import path from "path";
 const router = Router();
 
 const CONFIG_PATH = path.join(process.cwd(), ".wc-config.json");
+const ALLOW_FILE_CONFIG = process.env.NODE_ENV !== "production" || process.env.ALLOW_FILE_CONFIG === "true";
 
 interface StoreSettings {
   storeName: string;
@@ -36,20 +37,34 @@ interface RemoteStoreInfo {
 }
 
 function readConfig(): WcConfig {
-  try {
-    if (fs.existsSync(CONFIG_PATH)) {
-      const raw = fs.readFileSync(CONFIG_PATH, "utf-8");
-      return JSON.parse(raw);
-    }
-  } catch {}
-  return {
+  const envConfig: WcConfig = {
     storeUrl: process.env.WC_STORE_URL || "https://admin.mirruba-jewellery.com",
     consumerKey: process.env.WC_CONSUMER_KEY || "",
     consumerSecret: process.env.WC_CONSUMER_SECRET || "",
   };
+
+  if (!ALLOW_FILE_CONFIG) {
+    return envConfig;
+  }
+
+  try {
+    if (fs.existsSync(CONFIG_PATH)) {
+      const raw = fs.readFileSync(CONFIG_PATH, "utf-8");
+      const fileConfig = JSON.parse(raw) as Partial<WcConfig>;
+      return {
+        ...envConfig,
+        ...fileConfig,
+        store: fileConfig.store,
+      };
+    }
+  } catch {}
+  return envConfig;
 }
 
 function writeConfig(config: WcConfig): void {
+  if (!ALLOW_FILE_CONFIG) {
+    return;
+  }
   fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), "utf-8");
 }
 

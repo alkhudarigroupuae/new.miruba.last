@@ -35,6 +35,7 @@ export default function Dashboard() {
   const [saving, setSaving] = useState(false);
   const [savingStore, setSavingStore] = useState(false);
   const [testing, setTesting] = useState(false);
+  const [syncingProducts, setSyncingProducts] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [storeMessage, setStoreMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
@@ -211,6 +212,28 @@ export default function Dashboard() {
       setTestResult({ success: false, message: "Connection error" });
     } finally {
       setTesting(false);
+    }
+  }
+
+  async function handleSyncProducts() {
+    setSyncingProducts(true);
+    setMessage(null);
+    try {
+      const res = await fetch(getApiUrl("/wc/cache/clear"), {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMessage({ type: "success", text: "Products synced successfully. Frontend will refresh shortly." });
+        loadStats();
+      } else {
+        setMessage({ type: "error", text: data.error || "Failed to sync products" });
+      }
+    } catch {
+      setMessage({ type: "error", text: "Connection error while syncing products" });
+    } finally {
+      setSyncingProducts(false);
     }
   }
 
@@ -405,6 +428,15 @@ export default function Dashboard() {
                 >
                   {testing ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                   Test Connection
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSyncProducts}
+                  disabled={syncingProducts}
+                  className="flex-1 py-3 bg-transparent border border-emerald-500/40 text-emerald-400 rounded-xl font-medium tracking-wide transition-all hover:bg-emerald-500/10 disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {syncingProducts ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                  Sync Products Now
                 </button>
               </div>
             </form>

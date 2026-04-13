@@ -47,3 +47,6 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Local WooCommerce config secrets
+artifacts/api-server/.wc-config.json
