@@ -44,12 +44,9 @@ function StorySection() {
   useEffect(() => {
     fetchProducts()
       .then((prods) => {
-        const jewelryCats = ["rings", "earrings", "necklaces", "bracelets", "trending", "accessories"];
-        const filtered = prods.filter((p) =>
-          p.categories.some((c) => jewelryCats.includes(c.slug.toLowerCase())) && p.images.length > 0
-        );
-        if (filtered.length > 0) {
-          setStoryImage(filtered[0].images[0].src);
+        const withImages = prods.filter((p) => p.images.length > 0);
+        if (withImages.length > 0) {
+          setStoryImage(withImages[0].images[0].src);
         }
       })
       .catch(() => {});

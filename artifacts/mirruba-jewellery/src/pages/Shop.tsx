@@ -14,14 +14,8 @@ export default function Shop() {
       fetchCategories(),
     ])
       .then(([prods, cats]) => {
-        const jewelryProductCats = ["rings", "earrings", "necklaces", "bracelets", "trending", "accessories"];
-        const filteredProds = prods.filter((p) =>
-          p.categories.some((c) => jewelryProductCats.includes(c.slug.toLowerCase()))
-        );
-        setProducts(filteredProds);
-        const jewelryCategories = ["rings", "earrings", "necklaces", "bracelets", "trending", "accessories"];
-        const validCats = cats.filter((c) => jewelryCategories.includes(c.slug.toLowerCase()));
-        setCategories(validCats);
+        setProducts(prods);
+        setCategories(cats.filter((c) => c.slug !== "uncategorized" && c.slug !== "all"));
       })
       .catch(() => {})
       .finally(() => setLoading(false));

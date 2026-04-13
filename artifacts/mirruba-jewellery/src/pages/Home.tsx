@@ -74,11 +74,7 @@ function FeaturedSection() {
   useEffect(() => {
     fetchProducts()
       .then((prods) => {
-        const jewelryCats = ["rings", "earrings", "necklaces", "bracelets", "trending", "accessories"];
-        const filtered = prods.filter((p) =>
-          p.categories.some((c) => jewelryCats.includes(c.slug.toLowerCase()))
-        );
-        setProducts(filtered.slice(0, 4));
+        setProducts(prods.slice(0, 4));
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -133,9 +129,7 @@ function CategoryShowcase() {
   useEffect(() => {
     fetchCategories()
       .then((cats) => {
-        const jewelrySlugs = ["rings", "earrings", "necklaces", "bracelets", "trending", "accessories"];
-        const filtered = cats.filter((c) => jewelrySlugs.includes(c.slug.toLowerCase()));
-        setCategories(filtered);
+        setCategories(cats.filter((c) => c.slug !== "uncategorized" && c.slug !== "all"));
       })
       .catch(() => {});
   }, []);
@@ -218,12 +212,9 @@ function AboutPreview() {
   useEffect(() => {
     fetchProducts()
       .then((prods) => {
-        const jewelryCats = ["rings", "earrings", "necklaces", "bracelets", "trending", "accessories"];
-        const filtered = prods.filter((p) =>
-          p.categories.some((c) => jewelryCats.includes(c.slug.toLowerCase())) && p.images.length > 0
-        );
-        if (filtered.length > 0) {
-          setPreviewImage(filtered[0].images[0].src);
+        const withImages = prods.filter((p) => p.images.length > 0);
+        if (withImages.length > 0) {
+          setPreviewImage(withImages[0].images[0].src);
         }
       })
       .catch(() => {});
