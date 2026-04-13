@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
-import { fetchProducts, type WcProduct } from "@/data/products";
+import { fetchProducts, fetchCategories, type WcProduct, type WcCategory } from "@/data/products";
 import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
 import mobileBannerImg from "@assets/Untitled_design_(3)_1776088697980.jpg";
 
@@ -128,13 +128,19 @@ function FeaturedSection() {
 
 function CategoryShowcase() {
   const { ref, isVisible } = useInView(0.1);
+  const [categories, setCategories] = useState<WcCategory[]>([]);
 
-  const categories = [
-    { name: "Rings", image: "https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=500&h=600&fit=crop", slug: "rings" },
-    { name: "Necklaces", image: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=500&h=600&fit=crop", slug: "necklaces" },
-    { name: "Earrings", image: "https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=500&h=600&fit=crop", slug: "earrings" },
-    { name: "Bracelets", image: "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?w=500&h=600&fit=crop", slug: "bracelets" },
-  ];
+  useEffect(() => {
+    fetchCategories()
+      .then((cats) => {
+        const jewelrySlugs = ["rings", "earrings", "necklaces", "bracelets", "trending", "accessories"];
+        const filtered = cats.filter((c) => jewelrySlugs.includes(c.slug.toLowerCase()) && c.image);
+        setCategories(filtered);
+      })
+      .catch(() => {});
+  }, []);
+
+  if (categories.length === 0) return null;
 
   return (
     <section className="py-16 sm:py-24 bg-background" data-testid="section-categories">
@@ -143,7 +149,7 @@ function CategoryShowcase() {
           <p className="text-gold tracking-[0.3em] text-xs uppercase mb-4">Explore</p>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl mb-4">Shop By Category</h2>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className={`grid grid-cols-2 ${categories.length >= 4 ? "lg:grid-cols-4" : categories.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-2"} gap-4 sm:gap-6`}>
           {categories.map((cat, i) => (
             <Link
               key={cat.slug}
@@ -152,7 +158,7 @@ function CategoryShowcase() {
               style={{ transitionDelay: `${i * 150}ms` }}
             >
               <img
-                src={cat.image}
+                src={cat.image?.src || ""}
                 alt={cat.name}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 loading="lazy"

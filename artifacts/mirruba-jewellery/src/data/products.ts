@@ -5,10 +5,18 @@ export interface WcImage {
   alt: string;
 }
 
+export interface WcCategoryImage {
+  id: number;
+  src: string;
+  name: string;
+  alt: string;
+}
+
 export interface WcCategory {
   id: number;
   name: string;
   slug: string;
+  image: WcCategoryImage | null;
 }
 
 export interface WcProduct {
