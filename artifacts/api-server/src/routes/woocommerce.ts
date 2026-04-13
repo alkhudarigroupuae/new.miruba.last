@@ -149,8 +149,14 @@ router.post("/wc/orders", async (req: Request, res: Response) => {
 
     const order = await wcPost("/orders", orderData);
 
-    const config = getActiveConfig();
-    const checkoutUrl = `${config.storeUrl}/checkout/order-pay/${order.id}/?pay_for_order=true&key=${order.order_key}`;
+    req.log.info({ order_id: order.id, payment_url: order.payment_url, order_key: order.order_key }, "WooCommerce order created");
+
+    let checkoutUrl = order.payment_url || "";
+
+    if (!checkoutUrl) {
+      const config = getActiveConfig();
+      checkoutUrl = `${config.storeUrl}/checkout/order-pay/${order.id}/?pay_for_order=true&key=${order.order_key}`;
+    }
 
     res.set("Cache-Control", "no-store");
     res.json({
