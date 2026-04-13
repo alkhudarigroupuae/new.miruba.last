@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRoute, Link } from "wouter";
-import { ArrowLeft, ShoppingBag, Heart } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Heart, ChevronDown, ChevronUp } from "lucide-react";
 import { fetchProductBySlug, formatPrice, getProductImage, getProductCategory, stripHtml, type WcProduct } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
@@ -10,6 +10,7 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<WcProduct | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [showFullDescription, setShowFullDescription] = useState(false);
   const { addToCart } = useCart();
   const { toast } = useToast();
 
@@ -67,7 +68,8 @@ export default function ProductDetail() {
     });
   };
 
-  const description = stripHtml(product.description || product.short_description || "");
+  const shortDesc = stripHtml(product.short_description || "");
+  const fullDesc = stripHtml(product.description || "");
   const currentImage = product.images[selectedImage]?.src || getProductImage(product);
 
   return (
@@ -159,13 +161,47 @@ export default function ProductDetail() {
               )}
             </div>
 
-            {description && (
+            {shortDesc && (
+              <p
+                className="opacity-0 animate-stagger-up text-muted-foreground leading-relaxed mb-6"
+                style={{ animationDelay: "0.75s", animationFillMode: "forwards" }}
+                data-testid="text-product-description"
+              >
+                {shortDesc}
+              </p>
+            )}
+
+            {fullDesc && fullDesc !== shortDesc && (
+              <div
+                className="opacity-0 animate-stagger-up mb-10"
+                style={{ animationDelay: "0.8s", animationFillMode: "forwards" }}
+              >
+                <button
+                  onClick={() => setShowFullDescription(!showFullDescription)}
+                  className="inline-flex items-center gap-2 text-gold/80 hover:text-gold text-sm tracking-wider uppercase transition-colors"
+                >
+                  {showFullDescription ? "Hide Details" : "Read More"}
+                  {showFullDescription ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+                <div
+                  className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                    showFullDescription ? "max-h-[1000px] opacity-100 mt-4" : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <p className="text-muted-foreground/80 leading-relaxed text-sm border-l-2 border-gold/30 pl-4">
+                    {fullDesc}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {!shortDesc && fullDesc && (
               <p
                 className="opacity-0 animate-stagger-up text-muted-foreground leading-relaxed mb-10"
                 style={{ animationDelay: "0.75s", animationFillMode: "forwards" }}
                 data-testid="text-product-description"
               >
-                {description}
+                {fullDesc}
               </p>
             )}
 
