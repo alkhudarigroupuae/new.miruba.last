@@ -182,13 +182,8 @@ function LuxuryBanner() {
   const { ref, isVisible } = useInView(0.2);
 
   return (
-    <section className="relative py-20 sm:py-32 overflow-hidden" data-testid="section-luxury-banner">
-      <img
-        src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=1600&h=800&fit=crop"
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 bg-black/60" />
+    <section className="relative py-20 sm:py-32 overflow-hidden bg-[#231f20]" data-testid="section-luxury-banner">
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/10" />
       <div ref={ref} className="relative z-10 max-w-3xl mx-auto text-center px-4">
         <p className={`text-gold-light tracking-[0.4em] text-xs sm:text-sm uppercase mb-4 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
           Timeless Elegance
@@ -214,6 +209,21 @@ function LuxuryBanner() {
 
 function AboutPreview() {
   const { ref, isVisible } = useInView(0.2);
+  const [previewImage, setPreviewImage] = useState<string>("");
+
+  useEffect(() => {
+    fetchProducts()
+      .then((prods) => {
+        const jewelryCats = ["rings", "earrings", "necklaces", "bracelets", "trending", "accessories"];
+        const filtered = prods.filter((p) =>
+          p.categories.some((c) => jewelryCats.includes(c.slug.toLowerCase())) && p.images.length > 0
+        );
+        if (filtered.length > 0) {
+          setPreviewImage(filtered[0].images[0].src);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section className="py-16 sm:py-24 bg-background" data-testid="section-about-preview">
@@ -237,18 +247,20 @@ function AboutPreview() {
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <div className={`transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"}`}>
-            <div className="relative">
-              <img
-                src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop"
-                alt="Luxury jewelry"
-                className="w-full max-h-[280px] sm:max-h-[320px] rounded-lg shadow-xl object-cover"
-                loading="lazy"
-              />
-              <div className="absolute -bottom-4 -left-4 w-24 h-24 border-2 border-gold/30 rounded-lg hidden sm:block" />
-              <div className="absolute -top-4 -right-4 w-24 h-24 border-2 border-gold/30 rounded-lg hidden sm:block" />
+          {previewImage && (
+            <div className={`transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"}`}>
+              <div className="relative">
+                <img
+                  src={previewImage}
+                  alt="Mirruba Jewellery"
+                  className="w-full max-h-[280px] sm:max-h-[320px] rounded-lg shadow-xl object-cover"
+                  loading="lazy"
+                />
+                <div className="absolute -bottom-4 -left-4 w-24 h-24 border-2 border-gold/30 rounded-lg hidden sm:block" />
+                <div className="absolute -top-4 -right-4 w-24 h-24 border-2 border-gold/30 rounded-lg hidden sm:block" />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </section>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
+import { fetchProducts } from "@/data/products";
 
 function useInView(threshold = 0.1) {
   const ref = useRef<HTMLDivElement>(null);
@@ -38,6 +39,21 @@ function HeroBanner() {
 
 function StorySection() {
   const { ref, isVisible } = useInView(0.2);
+  const [storyImage, setStoryImage] = useState<string>("");
+
+  useEffect(() => {
+    fetchProducts()
+      .then((prods) => {
+        const jewelryCats = ["rings", "earrings", "necklaces", "bracelets", "trending", "accessories"];
+        const filtered = prods.filter((p) =>
+          p.categories.some((c) => jewelryCats.includes(c.slug.toLowerCase())) && p.images.length > 0
+        );
+        if (filtered.length > 0) {
+          setStoryImage(filtered[0].images[0].src);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section className="py-20 sm:py-28 bg-background" data-testid="section-story">
@@ -60,18 +76,20 @@ function StorySection() {
               special gift or looking to add a touch of luxury to your jewelry collection.
             </p>
           </div>
-          <div className={`transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"}`}>
-            <div className="relative">
-              <img
-                src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&h=800&fit=crop"
-                alt="Luxury jewelry"
-                className="w-full max-h-[350px] rounded-lg shadow-xl object-cover"
-                loading="lazy"
-              />
-              <div className="absolute -bottom-6 -left-6 w-32 h-32 border-2 border-gold/30 rounded-lg" />
-              <div className="absolute -top-6 -right-6 w-32 h-32 border-2 border-gold/30 rounded-lg" />
+          {storyImage && (
+            <div className={`transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"}`}>
+              <div className="relative">
+                <img
+                  src={storyImage}
+                  alt="Mirruba Jewellery"
+                  className="w-full max-h-[350px] rounded-lg shadow-xl object-cover"
+                  loading="lazy"
+                />
+                <div className="absolute -bottom-6 -left-6 w-32 h-32 border-2 border-gold/30 rounded-lg" />
+                <div className="absolute -top-6 -right-6 w-32 h-32 border-2 border-gold/30 rounded-lg" />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </section>
