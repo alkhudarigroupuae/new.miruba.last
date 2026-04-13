@@ -33,8 +33,19 @@ export default function Footer() {
           </div>
 
           <div className="flex flex-col items-center md:items-start">
-            <h4 className="font-serif text-lg tracking-wider mb-4 text-gold-light">Contact</h4>
-            <div className="space-y-3">
+            <h4 className="font-serif text-lg tracking-wider mb-4 text-gold-light hidden md:block">Contact</h4>
+            <div className="flex gap-6 md:hidden">
+              <a href="https://maps.google.com/?q=Sharjah+Emirates+Central+Market" target="_blank" rel="noopener noreferrer" className="w-11 h-11 rounded-full bg-gold/10 flex items-center justify-center text-gold-light hover:bg-gold/20 transition-colors">
+                <MapPin className="w-5 h-5" />
+              </a>
+              <a href="tel:+971501045496" className="w-11 h-11 rounded-full bg-gold/10 flex items-center justify-center text-gold-light hover:bg-gold/20 transition-colors">
+                <Phone className="w-5 h-5" />
+              </a>
+              <a href="mailto:contact@mirruba-jewellery.com" className="w-11 h-11 rounded-full bg-gold/10 flex items-center justify-center text-gold-light hover:bg-gold/20 transition-colors">
+                <Mail className="w-5 h-5" />
+              </a>
+            </div>
+            <div className="hidden md:block space-y-3">
               <div className="flex items-start gap-3 text-sm text-foreground/80">
                 <MapPin className="w-4 h-4 mt-0.5 text-gold-light shrink-0" />
                 <span>Sharjah, Emirates, Central Market</span>
