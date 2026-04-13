@@ -1,9 +1,79 @@
+import { useState } from "react";
 import { Link } from "wouter";
-import { MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone, Mail, Send, CheckCircle, Loader2 } from "lucide-react";
 import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
+
+function NewsletterSection() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email) return;
+    setStatus("loading");
+    setTimeout(() => {
+      window.location.href = `mailto:contact@mirruba-jewellery.com?subject=Newsletter Subscription&body=Please add me to your mailing list.%0A%0AMy email: ${encodeURIComponent(email)}`;
+      setStatus("success");
+      setEmail("");
+      setTimeout(() => setStatus("idle"), 4000);
+    }, 500);
+  }
+
+  return (
+    <section className="bg-[#1a1714] py-12 sm:py-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+        <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-5">
+          <Mail className="w-5 h-5 text-gold" />
+        </div>
+        <h3 className="font-serif text-2xl sm:text-3xl text-white mb-3">Stay Connected</h3>
+        <p className="text-sm text-foreground/60 mb-8 max-w-md mx-auto">
+          Subscribe to receive updates on new collections, exclusive offers, and jewellery inspiration.
+        </p>
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+          <div className="relative flex-1">
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email address"
+              required
+              className="w-full pl-11 pr-4 py-3.5 bg-[#231f20] border border-gold/20 rounded-xl text-white placeholder:text-foreground/30 focus:outline-none focus:border-gold transition-colors text-sm"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={status === "loading" || status === "success"}
+            className={`px-6 py-3.5 rounded-xl font-medium tracking-wide text-sm transition-all flex items-center justify-center gap-2 ${
+              status === "success"
+                ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                : "bg-gold text-white hover:bg-gold/90"
+            } disabled:opacity-70`}
+          >
+            {status === "loading" ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : status === "success" ? (
+              <>
+                <CheckCircle className="w-4 h-4" />
+                Subscribed
+              </>
+            ) : (
+              <>
+                <Send className="w-4 h-4" />
+                Subscribe
+              </>
+            )}
+          </button>
+        </form>
+      </div>
+    </section>
+  );
+}
 
 export default function Footer() {
   return (
+    <>
+    <NewsletterSection />
     <footer className="bg-[#231f20] text-foreground/90 pt-8 sm:pt-16 pb-6 sm:pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-12 mb-6 sm:mb-12 text-center md:text-left">
@@ -102,5 +172,6 @@ export default function Footer() {
         </div>
       </div>
     </footer>
+    </>
   );
 }
