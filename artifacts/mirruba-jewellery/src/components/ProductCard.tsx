@@ -30,7 +30,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
       data-testid={`card-product-${product.id}`}
     >
       <Link href={`/product/${product.slug}`} className="block">
-        <div className="relative overflow-hidden rounded-lg bg-muted aspect-square mb-2 sm:mb-4 transition-shadow duration-500 group-hover:shadow-[0_0_25px_rgba(231,188,103,0.15)]">
+        <div className="relative overflow-hidden rounded-lg bg-muted aspect-square mb-2 sm:mb-4 transition-shadow duration-500 group-hover:shadow-[0_0_35px_rgba(231,188,103,0.3)]">
           <img
             src={getProductImage(product)}
             alt={product.name}

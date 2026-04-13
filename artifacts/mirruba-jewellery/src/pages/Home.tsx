@@ -148,7 +148,7 @@ function CategoryShowcase() {
             <Link
               key={cat.slug}
               href="/shop"
-              className={`group relative overflow-hidden rounded-lg aspect-[3/4] transition-all duration-700 hover:shadow-[0_0_30px_rgba(231,188,103,0.2)] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+              className={`group relative overflow-hidden rounded-lg aspect-[3/4] transition-all duration-700 hover:shadow-[0_0_35px_rgba(231,188,103,0.3)] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
               style={{ transitionDelay: `${i * 150}ms` }}
             >
               <img
