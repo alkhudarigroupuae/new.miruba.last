@@ -73,9 +73,21 @@ export async function fetchCategories(): Promise<WcCategory[]> {
 export function formatPrice(price: string | number, currency: string = "AED"): string {
   const num = typeof price === "string" ? parseFloat(price) : price;
   const normalizedCurrency = currency === "USD" ? "USD" : "AED";
-  const symbol = normalizedCurrency === "USD" ? "$" : "AED";
-  if (isNaN(num)) return `${symbol} 0`;
-  return `${symbol} ${num.toLocaleString()}`;
+  const AED_PER_USD = 3.67;
+  if (isNaN(num)) return normalizedCurrency === "USD" ? "$0.00" : "AED 0.00";
+
+  if (normalizedCurrency === "USD") {
+    const usdValue = num / AED_PER_USD;
+    return `$${usdValue.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  }
+
+  return `AED ${num.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
 }
 
 export function getProductImage(product: WcProduct): string {
