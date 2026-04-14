@@ -12,7 +12,7 @@ version = "1.0.0"
 [[services]]
 name = "web"
 paths = [ "/" ]
-localPort = 23879
+localPort = 8081
 
 [services.development]
 run = "pnpm --filter @workspace/mirruba-jewellery run dev"
@@ -27,5 +27,5 @@ from = "/*"
 to = "/index.html"
 
 [services.env]
-PORT = "23879"
+PORT = "8081"
 BASE_PATH = "/"

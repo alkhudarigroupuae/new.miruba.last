@@ -49,5 +49,6 @@ Thumbs.db
 .local/
 
 # Local WooCommerce config secrets
+.wc-config.json
 artifacts/api-server/.wc-config.json
 .vercel

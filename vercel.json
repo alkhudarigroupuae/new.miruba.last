@@ -1,5 +1,5 @@
 {
-  "installCommand": "pnpm install --frozen-lockfile",
+  "installCommand": "pnpm install",
   "buildCommand": "PORT=5173 BASE_PATH=/ pnpm --filter @workspace/api-server run build && PORT=5173 BASE_PATH=/ pnpm --filter @workspace/mirruba-jewellery run build",
   "outputDirectory": "artifacts/mirruba-jewellery/dist/public",
   "routes": [

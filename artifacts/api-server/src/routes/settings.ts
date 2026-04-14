@@ -4,9 +4,7 @@ import path from "path";
 
 const router = Router();
 
-const CONFIG_PATH = path.join(process.cwd(), ".wc-config.json");
-const ALLOW_FILE_CONFIG = process.env.NODE_ENV !== "production" || process.env.ALLOW_FILE_CONFIG === "true";
-let runtimeConfigOverride: Partial<WcConfig> | null = null;
+const CONFIG_PATH = process.env.WC_CONFIG_PATH || path.resolve(process.cwd(), ".wc-config.json");
 let remoteHydrationAttempted = false;
 const REMOTE_CONFIG_ENDPOINT = "/wp-json/ecommerco-ai/v1/bridge-config";
 
@@ -52,36 +50,29 @@ function readConfig(): WcConfig {
     consumerSecret: process.env.WC_CONSUMER_SECRET || "",
   };
 
-  const applyRuntimeOverride = (base: WcConfig): WcConfig => ({
-    ...base,
-    ...(runtimeConfigOverride || {}),
-    store: runtimeConfigOverride?.store ?? base.store,
-  });
-
-  if (!ALLOW_FILE_CONFIG) {
-    return applyRuntimeOverride(envConfig);
-  }
-
   try {
     if (fs.existsSync(CONFIG_PATH)) {
       const raw = fs.readFileSync(CONFIG_PATH, "utf-8");
       const fileConfig = JSON.parse(raw) as Partial<WcConfig>;
-      return applyRuntimeOverride({
-        ...envConfig,
-        ...fileConfig,
+      return {
+        storeUrl: fileConfig.storeUrl || envConfig.storeUrl,
+        consumerKey: fileConfig.consumerKey || envConfig.consumerKey,
+        consumerSecret: fileConfig.consumerSecret || envConfig.consumerSecret,
         store: fileConfig.store,
-      });
+      };
     }
   } catch {}
-  return applyRuntimeOverride(envConfig);
+  return envConfig;
 }
 
-function writeConfig(config: WcConfig): void {
-  runtimeConfigOverride = config;
-  if (!ALLOW_FILE_CONFIG) {
-    return;
+function writeConfig(config: WcConfig): boolean {
+  try {
+    fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), { encoding: "utf-8", mode: 0o600 });
+    return true;
+  } catch (err) {
+    console.error("Failed to write config file:", err);
+    return false;
   }
-  fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), "utf-8");
 }
 
 export function getActiveConfig(): WcConfig {
@@ -367,9 +358,12 @@ router.put("/settings", async (req: Request, res: ExpressResponse) => {
     consumerSecret: nextConsumerSecret,
     store: store ? { ...(current.store || {}), ...store } : current.store,
   };
-  writeConfig(updated);
+  const persisted = writeConfig(updated);
 
   const warnings: string[] = [];
+  if (!persisted) {
+    warnings.push("Settings could not be saved to disk — they will be lost on server restart.");
+  }
   const s = updated.store;
 
   if (s) {
