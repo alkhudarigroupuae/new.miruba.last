@@ -70,10 +70,11 @@ export async function fetchCategories(): Promise<WcCategory[]> {
   return res.json();
 }
 
-export function formatPrice(price: string | number, currency: string = "AED"): string {
+export function formatPrice(price: string | number, currency: string = "AED", usdRate: string | number = "3.67"): string {
   const num = typeof price === "string" ? parseFloat(price) : price;
   const normalizedCurrency = currency === "USD" ? "USD" : "AED";
-  const AED_PER_USD = 3.67;
+  const parsedRate = typeof usdRate === "string" ? parseFloat(usdRate) : usdRate;
+  const AED_PER_USD = Number.isFinite(parsedRate) && parsedRate > 0 ? parsedRate : 3.67;
   if (isNaN(num)) return normalizedCurrency === "USD" ? "$0.00" : "AED 0.00";
 
   if (normalizedCurrency === "USD") {

@@ -23,6 +23,7 @@ export default function Dashboard() {
   const [storeName, setStoreName] = useState("");
   const [tagline, setTagline] = useState("");
   const [currency, setCurrency] = useState("AED");
+  const [usdRate, setUsdRate] = useState("3.67");
   const [whatsappNumber, setWhatsappNumber] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
@@ -106,6 +107,7 @@ export default function Dashboard() {
         setStoreName(data.store.storeName || "");
         setTagline(data.store.tagline || "");
         setCurrency(data.store.currency || "AED");
+        setUsdRate(data.store.usdRate || "3.67");
         setWhatsappNumber(data.store.whatsappNumber || "");
         setContactEmail(data.store.contactEmail || "");
         setContactPhone(data.store.contactPhone || "");
@@ -180,6 +182,7 @@ export default function Dashboard() {
         body: JSON.stringify({
           store: {
             storeName, tagline, currency, whatsappNumber,
+            usdRate,
             contactEmail, contactPhone, address,
             facebookUrl, instagramUrl, developerName, developerUrl,
           },
@@ -492,6 +495,21 @@ export default function Dashboard() {
                     <option value="USD">USD ($ Dollar - display only)</option>
                   </select>
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">USD Rate (1 USD = ? AED)</label>
+                  <input
+                    type="number"
+                    step="0.0001"
+                    min="0.0001"
+                    value={usdRate}
+                    onChange={(e) => setUsdRate(e.target.value)}
+                    placeholder="3.67"
+                    className="w-full px-4 py-3 bg-[#0f0d0c] border border-border rounded-xl text-white placeholder:text-muted-foreground/50 focus:outline-none focus:border-gold transition-colors text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-muted-foreground mb-2">
                     <MessageCircle className="w-3.5 h-3.5 inline mr-1.5" />

@@ -4,6 +4,7 @@ export interface StoreInfo {
   storeName: string;
   tagline: string;
   currency: string;
+  usdRate: string;
   whatsappNumber: string;
   contactEmail: string;
   contactPhone: string;
@@ -18,6 +19,7 @@ const defaults: StoreInfo = {
   storeName: "Mirruba Jewellery",
   tagline: "An Icon Of Absolute Femininity",
   currency: "AED",
+  usdRate: "3.67",
   whatsappNumber: "971501045496",
   contactEmail: "contact@mirruba-jewellery.com",
   contactPhone: "+971 501 045 496",

@@ -1,5 +1,5 @@
-import { Router, type Request, type Response } from "express";
-import { getActiveConfig } from "./settings";
+import { Router, type Request, type Response as ExpressResponse } from "express";
+import { getActiveConfig, hydrateConfigFromRemote } from "./settings";
 
 const router = Router();
 
@@ -12,7 +12,7 @@ const cache = new Map<string, CacheEntry>();
 const CACHE_TTL = 60 * 1000;
 const ADMIN_PASSWORD = process.env.SESSION_SECRET || "admin123";
 
-function requireAdminToken(req: Request, res: Response): boolean {
+function requireAdminToken(req: Request, res: ExpressResponse): boolean {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     res.status(401).json({ error: "Unauthorized" });
@@ -45,7 +45,7 @@ function hasWooCredentials() {
   return Boolean(config.storeUrl && config.consumerKey && config.consumerSecret);
 }
 
-async function fetchWithWooAuthFallback(url: URL, init: RequestInit = {}): Promise<Response> {
+async function fetchWithWooAuthFallback(url: URL, init: RequestInit = {}): Promise<globalThis.Response> {
   const config = getActiveConfig();
   if (!config.storeUrl || !config.consumerKey || !config.consumerSecret) {
     throw new Error("WooCommerce credentials are not configured");
@@ -135,9 +135,11 @@ interface WcOrderResponse {
   total: string;
 }
 
-router.get("/wc/products", async (req: Request, res: Response) => {
+router.get("/wc/products", async (req: Request, res: ExpressResponse) => {
+  await hydrateConfigFromRemote();
   if (!hasWooCredentials()) {
-    return res.status(503).json({ error: "WooCommerce credentials are not configured" });
+    res.status(503).json({ error: "WooCommerce credentials are not configured" });
+    return;
   }
   try {
     const params: Record<string, string> = { per_page: "100" };
@@ -156,9 +158,11 @@ router.get("/wc/products", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/wc/products/:id", async (req: Request, res: Response) => {
+router.get("/wc/products/:id", async (req: Request, res: ExpressResponse) => {
+  await hydrateConfigFromRemote();
   if (!hasWooCredentials()) {
-    return res.status(503).json({ error: "WooCommerce credentials are not configured" });
+    res.status(503).json({ error: "WooCommerce credentials are not configured" });
+    return;
   }
   try {
     const { data, fromCache } = await wcFetchCached(`/products/${req.params.id}`);
@@ -171,9 +175,11 @@ router.get("/wc/products/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/wc/categories", async (_req: Request, res: Response) => {
+router.get("/wc/categories", async (_req: Request, res: ExpressResponse) => {
+  await hydrateConfigFromRemote();
   if (!hasWooCredentials()) {
-    return res.status(503).json({ error: "WooCommerce credentials are not configured" });
+    res.status(503).json({ error: "WooCommerce credentials are not configured" });
+    return;
   }
   try {
     const { data, fromCache } = await wcFetchCached("/products/categories", { per_page: "100" });
@@ -186,12 +192,14 @@ router.get("/wc/categories", async (_req: Request, res: Response) => {
   }
 });
 
-router.post("/wc/orders", async (req: Request, res: Response) => {
+router.post("/wc/orders", async (req: Request, res: ExpressResponse) => {
   try {
+    await hydrateConfigFromRemote();
     const { billing, line_items, customer_note } = req.body as OrderRequestBody;
 
     if (!billing || !Array.isArray(line_items) || line_items.length === 0) {
-      return res.status(400).json({ error: "Invalid order payload" });
+      res.status(400).json({ error: "Invalid order payload" });
+      return;
     }
 
     const orderData = {
@@ -233,20 +241,22 @@ router.post("/wc/orders", async (req: Request, res: Response) => {
     }
 
     res.set("Cache-Control", "no-store");
-    return res.json({
+    res.json({
       success: true,
       order_id: order.id,
       order_key: order.order_key,
       total: order.total,
       checkout_url: checkoutUrl,
     });
+    return;
   } catch (err: any) {
     req.log.error({ err }, "Failed to create WooCommerce order");
-    return res.status(500).json({ error: "Failed to create order", details: err.message });
+    res.status(500).json({ error: "Failed to create order", details: err.message });
+    return;
   }
 });
 
-router.post("/wc/cache/clear", async (_req: Request, res: Response) => {
+router.post("/wc/cache/clear", async (_req: Request, res: ExpressResponse) => {
   if (!requireAdminToken(_req, res)) return;
   cache.clear();
   res.json({ success: true, message: "Cache cleared" });

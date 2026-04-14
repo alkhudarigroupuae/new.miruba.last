@@ -1,4 +1,4 @@
-import { Router, type Request, type Response } from "express";
+import { Router, type Request, type Response as ExpressResponse } from "express";
 import fs from "fs";
 import path from "path";
 
@@ -7,11 +7,14 @@ const router = Router();
 const CONFIG_PATH = path.join(process.cwd(), ".wc-config.json");
 const ALLOW_FILE_CONFIG = process.env.NODE_ENV !== "production" || process.env.ALLOW_FILE_CONFIG === "true";
 let runtimeConfigOverride: Partial<WcConfig> | null = null;
+let remoteHydrationAttempted = false;
+const REMOTE_CONFIG_ENDPOINT = "/wp-json/ecommerco-ai/v1/bridge-config";
 
 interface StoreSettings {
   storeName: string;
   tagline: string;
   currency: string;
+  usdRate: string;
   whatsappNumber: string;
   contactEmail: string;
   contactPhone: string;
@@ -27,6 +30,11 @@ interface WcConfig {
   consumerKey: string;
   consumerSecret: string;
   store?: StoreSettings;
+}
+
+interface RemoteBridgeConfigResponse {
+  success?: boolean;
+  config?: Partial<WcConfig>;
 }
 
 interface RemoteStoreInfo {
@@ -84,6 +92,10 @@ function baseUrl(rawUrl: string): string {
   return rawUrl.endsWith("/") ? rawUrl.slice(0, -1) : rawUrl;
 }
 
+function bridgeToken(): string {
+  return process.env.SESSION_SECRET || "admin123";
+}
+
 function wcCredentials(config: WcConfig): string {
   return Buffer.from(`${config.consumerKey}:${config.consumerSecret}`).toString("base64");
 }
@@ -92,7 +104,67 @@ function hasWooCredentials(config: WcConfig): boolean {
   return Boolean(config.storeUrl && config.consumerKey && config.consumerSecret);
 }
 
-async function wcFetchWithAuthFallback(url: URL, init: RequestInit, config: WcConfig): Promise<Response> {
+async function fetchRemoteBridgeConfig(storeUrl: string): Promise<Partial<WcConfig> | null> {
+  try {
+    const url = new URL(`${baseUrl(storeUrl)}${REMOTE_CONFIG_ENDPOINT}`);
+    const res = await fetch(url.toString(), {
+      headers: {
+        "X-Ecommerco-Bridge-Token": bridgeToken(),
+      },
+    });
+    if (!res.ok) return null;
+    const payload = (await res.json()) as RemoteBridgeConfigResponse;
+    if (!payload?.success || !payload.config) return null;
+    return payload.config;
+  } catch {
+    return null;
+  }
+}
+
+async function pushRemoteBridgeConfig(config: WcConfig): Promise<void> {
+  if (!config.storeUrl) return;
+  const url = new URL(`${baseUrl(config.storeUrl)}${REMOTE_CONFIG_ENDPOINT}`);
+  const res = await fetch(url.toString(), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Ecommerco-Bridge-Token": bridgeToken(),
+    },
+    body: JSON.stringify({
+      storeUrl: config.storeUrl,
+      consumerKey: config.consumerKey,
+      consumerSecret: config.consumerSecret,
+      store: config.store || {},
+    }),
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Remote credential persistence failed: ${res.status} ${body}`);
+  }
+}
+
+export async function hydrateConfigFromRemote(force = false): Promise<void> {
+  if (remoteHydrationAttempted && !force) return;
+  remoteHydrationAttempted = true;
+
+  const current = readConfig();
+  if (hasWooCredentials(current) || !current.storeUrl) return;
+
+  const remoteConfig = await fetchRemoteBridgeConfig(current.storeUrl);
+  if (!remoteConfig) return;
+
+  const merged: WcConfig = {
+    ...current,
+    ...remoteConfig,
+    store: remoteConfig.store ? { ...(current.store || {}), ...remoteConfig.store } : current.store,
+  };
+
+  if (hasWooCredentials(merged)) {
+    writeConfig(merged);
+  }
+}
+
+async function wcFetchWithAuthFallback(url: URL, init: RequestInit, config: WcConfig): Promise<globalThis.Response> {
   if (!hasWooCredentials(config)) {
     throw new Error("WooCommerce credentials are not configured");
   }
@@ -205,7 +277,7 @@ async function updateWordPressSettings(partial: { title?: string; description?: 
 
 const ADMIN_PASSWORD = process.env.SESSION_SECRET || "admin123";
 
-function requireAuth(req: Request, res: Response): boolean {
+function requireAuth(req: Request, res: ExpressResponse): boolean {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     res.status(401).json({ error: "Unauthorized" });
@@ -219,7 +291,7 @@ function requireAuth(req: Request, res: Response): boolean {
   return true;
 }
 
-router.post("/auth/login", (req: Request, res: Response) => {
+router.post("/auth/login", (req: Request, res: ExpressResponse) => {
   const { password } = req.body;
   if (password === ADMIN_PASSWORD) {
     res.json({ success: true, token: ADMIN_PASSWORD });
@@ -228,7 +300,7 @@ router.post("/auth/login", (req: Request, res: Response) => {
   }
 });
 
-router.get("/store-info", (_req: Request, res: Response) => {
+router.get("/store-info", (_req: Request, res: ExpressResponse) => {
   const config = readConfig();
   const s = config.store || {} as StoreSettings;
   res.set("Cache-Control", "public, max-age=300");
@@ -236,6 +308,7 @@ router.get("/store-info", (_req: Request, res: Response) => {
     storeName: s.storeName || "Mirruba Jewellery",
     tagline: s.tagline || "An Icon Of Absolute Femininity",
     currency: s.currency || "AED",
+    usdRate: s.usdRate || "3.67",
     whatsappNumber: s.whatsappNumber || "971501045496",
     contactEmail: s.contactEmail || "contact@mirruba-jewellery.com",
     contactPhone: s.contactPhone || "+971 501 045 496",
@@ -247,8 +320,9 @@ router.get("/store-info", (_req: Request, res: Response) => {
   });
 });
 
-router.get("/settings", async (req: Request, res: Response) => {
+router.get("/settings", async (req: Request, res: ExpressResponse) => {
   if (!requireAuth(req, res)) return;
+  await hydrateConfigFromRemote();
   const config = readConfig();
   const remote = await getRemoteStoreInfo(config);
   const s = config.store || {} as StoreSettings;
@@ -257,6 +331,7 @@ router.get("/settings", async (req: Request, res: Response) => {
     storeName: remote.storeName || s.storeName || "Mirruba Jewellery",
     tagline: remote.tagline || s.tagline || "An Icon Of Absolute Femininity",
     currency: remote.currency || s.currency || "AED",
+    usdRate: s.usdRate || "3.67",
     whatsappNumber: s.whatsappNumber || "971501045496",
     contactEmail: remote.contactEmail || s.contactEmail || "contact@mirruba-jewellery.com",
     contactPhone: s.contactPhone || "+971 501 045 496",
@@ -276,7 +351,7 @@ router.get("/settings", async (req: Request, res: Response) => {
   });
 });
 
-router.put("/settings", async (req: Request, res: Response) => {
+router.put("/settings", async (req: Request, res: ExpressResponse) => {
   if (!requireAuth(req, res)) return;
   const { storeUrl, consumerKey, consumerSecret, store } = req.body;
   const current = readConfig();
@@ -320,6 +395,12 @@ router.put("/settings", async (req: Request, res: Response) => {
     }
   }
 
+  try {
+    await pushRemoteBridgeConfig(updated);
+  } catch (err: unknown) {
+    warnings.push(err instanceof Error ? err.message : "Failed to persist credentials remotely");
+  }
+
   res.json({
     success: true,
     message: warnings.length
@@ -329,14 +410,16 @@ router.put("/settings", async (req: Request, res: Response) => {
   });
 });
 
-router.post("/settings/test", async (req: Request, res: Response) => {
+router.post("/settings/test", async (req: Request, res: ExpressResponse) => {
   if (!requireAuth(req, res)) return;
+  await hydrateConfigFromRemote();
   const config = readConfig();
   if (!hasWooCredentials(config)) {
-    return res.json({
+    res.json({
       success: false,
       message: "Store URL and WooCommerce API credentials are required.",
     });
+    return;
   }
   try {
     const url = new URL("/wp-json/wc/v3/products", config.storeUrl);
