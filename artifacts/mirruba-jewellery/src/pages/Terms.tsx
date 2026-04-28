@@ -1,9 +1,12 @@
+import { useLanguage } from "@/context/LanguageContext";
+
 export default function Terms() {
+  const { t } = useLanguage();
   return (
     <main className="pt-24 pb-16 min-h-screen" data-testid="page-terms">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <p className="text-gold tracking-[0.3em] text-xs uppercase mb-4">Legal</p>
-        <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl mb-10">Terms of Service</h1>
+        <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl mb-10">{t("termsOfService")}</h1>
 
         <div className="space-y-8 text-muted-foreground leading-relaxed text-sm">
           <section>

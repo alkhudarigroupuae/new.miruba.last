@@ -4,9 +4,11 @@ import { ArrowLeft, Trash2, ShoppingBag, Minus, Plus, Send, Loader2, CheckCircle
 import { useCart } from "@/context/CartContext";
 import { useStore } from "@/context/StoreContext";
 import { useCurrency } from "@/context/CurrencyContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { formatPrice, getProductImage, getProductCategory } from "@/data/products";
 
 export default function Checkout() {
+  const { t, dir } = useLanguage();
   const { items, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
   const store = useStore();
   const { currency } = useCurrency();
@@ -124,18 +126,18 @@ export default function Checkout() {
           <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-emerald-400" />
           </div>
-          <h2 className="font-serif text-3xl mb-3">Order Sent!</h2>
+          <h2 className="font-serif text-3xl mb-3">{t("orderSent")}</h2>
           <p className="text-muted-foreground mb-2">
-            Your order has been sent via WhatsApp.
+            {t("orderSentDesc")}
           </p>
           <p className="text-muted-foreground text-sm mb-8">
-            Our team will confirm your order and contact you shortly.
+            {t("orderSentSub")}
           </p>
           <Link
             href="/shop"
             className="inline-flex items-center gap-2 bg-gold text-white px-8 py-3 rounded-lg tracking-[0.1em] uppercase text-sm font-medium hover:bg-gold/90 transition-all"
           >
-            Continue Shopping
+            {t("continueShopping")}
           </Link>
         </div>
       </main>
@@ -149,12 +151,12 @@ export default function Checkout() {
           href="/shop"
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-gold transition-colors mb-8 text-sm"
         >
-          <ArrowLeft className="w-4 h-4" />
-          Continue Shopping
+          <ArrowLeft className={`w-4 h-4 ${dir === 'rtl' ? 'rotate-180' : ''}`} />
+          {t("continueShopping")}
         </Link>
 
         <h1 className="font-serif text-3xl sm:text-4xl mb-4">
-          {step === "cart" ? "Your Bag" : "Checkout"}
+          {step === "cart" ? t("yourBag") : t("checkoutTitle")}
         </h1>
 
         {step === "details" && (
@@ -162,8 +164,8 @@ export default function Checkout() {
             onClick={() => setStep("cart")}
             className="text-sm text-gold hover:text-gold-light transition-colors mb-8 inline-flex items-center gap-1"
           >
-            <ArrowLeft className="w-3 h-3" />
-            Back to bag
+            <ArrowLeft className={`w-3 h-3 ${dir === 'rtl' ? 'rotate-180' : ''}`} />
+            {t("backToBag")}
           </button>
         )}
 
@@ -171,13 +173,13 @@ export default function Checkout() {
           <div className="text-center py-20 opacity-0 animate-fade-in" style={{ animationFillMode: "forwards" }}>
             <ShoppingBag className="w-16 h-16 mx-auto text-muted-foreground/30 mb-6" />
             <p className="font-serif text-xl text-muted-foreground mb-4">
-              Your shopping bag is empty
+              {t("yourCartIsEmpty")}
             </p>
             <Link
               href="/shop"
               className="inline-flex items-center gap-2 text-gold hover:text-gold-dark transition-colors tracking-[0.15em] uppercase text-sm font-medium"
             >
-              Browse Products
+              {t("browseProducts")}
             </Link>
           </div>
         ) : step === "cart" ? (
@@ -231,7 +233,7 @@ export default function Checkout() {
 
             <div className="lg:col-span-1">
               <div className="bg-[#1a1816] rounded-xl border border-border/30 p-5 sm:p-6 sticky top-28">
-                <h3 className="font-serif text-lg mb-5">Order Summary</h3>
+                <h3 className="font-serif text-lg mb-5">{t("orderSummary")}</h3>
                 <div className="space-y-3 mb-5">
                   {items.map((item) => (
                     <div key={item.product.id} className="flex justify-between text-sm">
@@ -243,12 +245,8 @@ export default function Checkout() {
                   ))}
                 </div>
                 <div className="border-t border-border/30 pt-4 mb-5">
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-muted-foreground">Shipping</span>
-                    <span className="text-gold text-sm">Free</span>
-                  </div>
                   <div className="flex justify-between font-serif text-lg">
-                    <span>Total</span>
+                    <span>{t("total")}</span>
                     <span className="text-gold">{formatPrice(totalPrice, currency, store.usdRate)}</span>
                   </div>
                 </div>
@@ -256,7 +254,7 @@ export default function Checkout() {
                   onClick={handleProceed}
                   className="w-full bg-gold text-white py-3.5 tracking-[0.1em] uppercase text-sm font-medium hover:bg-gold/90 transition-all rounded-lg flex items-center justify-center gap-2"
                 >
-                  Proceed to Checkout
+                  {t("proceedToCheckout")}
                 </button>
               </div>
             </div>
@@ -265,22 +263,22 @@ export default function Checkout() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 mt-6">
             <div className="lg:col-span-2 space-y-5">
               <div className="bg-[#1a1816] rounded-xl border border-border/30 p-5 sm:p-6">
-                <h3 className="font-serif text-lg mb-5">Your Information</h3>
+                <h3 className="font-serif text-lg mb-5">{t("contactInformation")}</h3>
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">Full Name *</label>
+                      <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">{t("firstName")} *</label>
                       <input
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Your full name"
+                        placeholder={t("firstName")}
                         required
                         className="w-full px-4 py-3 bg-[#0f0d0c] border border-border/40 rounded-lg text-white placeholder:text-muted-foreground/30 focus:outline-none focus:border-gold transition-colors text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">Phone *</label>
+                      <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">{t("phone")} *</label>
                       <input
                         type="tel"
                         value={phone}
@@ -293,7 +291,7 @@ export default function Checkout() {
                   </div>
                   <div>
                     <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">
-                      Email {paymentMethod === "online" ? "*" : ""}
+                      {t("emailAddress")} {paymentMethod === "online" ? "*" : ""}
                     </label>
                     <input
                       type="email"
@@ -306,7 +304,7 @@ export default function Checkout() {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">City</label>
+                      <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">{t("city")}</label>
                       <input
                         type="text"
                         value={city}
@@ -316,22 +314,22 @@ export default function Checkout() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">Address</label>
+                      <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">{t("address")}</label>
                       <input
                         type="text"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
-                        placeholder="Street address"
+                        placeholder={t("address")}
                         className="w-full px-4 py-3 bg-[#0f0d0c] border border-border/40 rounded-lg text-white placeholder:text-muted-foreground/30 focus:outline-none focus:border-gold transition-colors text-sm"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">Order Notes</label>
+                    <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">{t("orderNotes")}</label>
                     <textarea
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
-                      placeholder="Any special requests..."
+                      placeholder="..."
                       rows={3}
                       className="w-full px-4 py-3 bg-[#0f0d0c] border border-border/40 rounded-lg text-white placeholder:text-muted-foreground/30 focus:outline-none focus:border-gold transition-colors text-sm resize-none"
                     />
@@ -340,7 +338,7 @@ export default function Checkout() {
               </div>
 
               <div className="bg-[#1a1816] rounded-xl border border-border/30 p-5 sm:p-6">
-                <h3 className="font-serif text-lg mb-4">Payment Method</h3>
+                <h3 className="font-serif text-lg mb-4">{t("paymentMethod")}</h3>
                 <div className="space-y-3">
                   <label
                     className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${
@@ -363,8 +361,8 @@ export default function Checkout() {
                     </div>
                     <CreditCard className={`w-5 h-5 shrink-0 ${paymentMethod === "online" ? "text-gold" : "text-muted-foreground"}`} />
                     <div>
-                      <p className="text-sm font-medium">Pay Online</p>
-                      <p className="text-xs text-muted-foreground">Credit/Debit Card via N-Genius</p>
+                      <p className="text-sm font-medium">{t("payWithCard")}</p>
+                      <p className="text-xs text-muted-foreground">{t("paySecurely")}</p>
                     </div>
                   </label>
 
@@ -387,10 +385,9 @@ export default function Checkout() {
                     }`}>
                       {paymentMethod === "whatsapp" && <div className="w-2.5 h-2.5 rounded-full bg-[#25D366]" />}
                     </div>
-                    <Send className={`w-5 h-5 shrink-0 ${paymentMethod === "whatsapp" ? "text-[#25D366]" : "text-muted-foreground"}`} />
+                    <Send className={`w-5 h-5 shrink-0 ${paymentMethod === "whatsapp" ? "text-[#25D366]" : "text-muted-foreground"} ${dir === 'rtl' ? 'rotate-180' : ''}`} />
                     <div>
-                      <p className="text-sm font-medium">Order via WhatsApp</p>
-                      <p className="text-xs text-muted-foreground">Pay on delivery or bank transfer</p>
+                      <p className="text-sm font-medium">{t("orderViaWhatsapp")}</p>
                     </div>
                   </label>
                 </div>
@@ -399,7 +396,7 @@ export default function Checkout() {
 
             <div className="lg:col-span-1">
               <div className="bg-[#1a1816] rounded-xl border border-border/30 p-5 sm:p-6 sticky top-28">
-                <h3 className="font-serif text-lg mb-5">Order Summary</h3>
+                <h3 className="font-serif text-lg mb-5">{t("orderSummary")}</h3>
                 <div className="space-y-2 mb-5">
                   {items.map((item) => (
                     <div key={item.product.id} className="flex justify-between text-sm">
@@ -441,14 +438,14 @@ export default function Checkout() {
                   ) : paymentMethod === "online" ? (
                     <CreditCard className="w-4 h-4" />
                   ) : (
-                    <Send className="w-4 h-4" />
+                    <Send className={`w-4 h-4 ${dir === 'rtl' ? 'rotate-180' : ''}`} />
                   )}
-                  {paymentMethod === "online" ? "Pay Now" : "Order via WhatsApp"}
+                  {paymentMethod === "online" ? t("payNow") : t("orderViaWhatsapp")}
                 </button>
                 <p className="text-xs text-muted-foreground/50 text-center mt-3">
                   {paymentMethod === "online"
-                    ? "You'll be redirected to a secure payment page"
-                    : "Your order will be sent to our WhatsApp for confirmation"}
+                    ? t("redirectSecure")
+                    : t("whatsappConfirm")}
                 </p>
               </div>
             </div>
