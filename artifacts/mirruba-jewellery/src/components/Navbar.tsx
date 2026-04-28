@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { ShoppingBag, Menu, X } from "lucide-react";
+import { ShoppingBag, Menu, X, Globe } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useCurrency } from "@/context/CurrencyContext";
+import { useLanguage } from "@/context/LanguageContext";
 import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
 
 export default function Navbar() {
@@ -10,6 +11,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { totalItems, setIsCartOpen } = useCart();
   const { currency, setCurrency } = useCurrency();
+  const { language, setLanguage } = useLanguage();
   const [location] = useLocation();
 
   useEffect(() => {
@@ -23,10 +25,10 @@ export default function Navbar() {
   }, [location]);
 
   const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/shop", label: "Shop" },
-    { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
+    { href: "/", label: language === "ar" ? "الرئيسية" : "Home" },
+    { href: "/shop", label: language === "ar" ? "المتجر" : "Shop" },
+    { href: "/about", label: language === "ar" ? "عن ميروبا" : "About" },
+    { href: "/contact", label: language === "ar" ? "اتصل بنا" : "Contact" },
   ];
 
   return (
@@ -63,16 +65,29 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
-            <select
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value as "AED" | "USD")}
-              className="hidden md:block bg-black/30 border border-gold/30 text-foreground text-xs tracking-wider rounded px-2 py-1 focus:outline-none focus:border-gold"
-              data-testid="select-header-currency"
-              aria-label="Header currency selector"
-            >
-              <option value="AED">AED</option>
-              <option value="USD">USD</option>
-            </select>
+            <div className="hidden md:flex items-center gap-2">
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as "en" | "ar")}
+                className="bg-transparent text-foreground text-xs tracking-wider rounded px-1 py-1 focus:outline-none hover:text-gold cursor-pointer"
+                data-testid="select-header-language"
+                aria-label="Header language selector"
+              >
+                <option value="en" className="bg-black">ENG</option>
+                <option value="ar" className="bg-black">عربي</option>
+              </select>
+              <span className="text-white/20">|</span>
+              <select
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value as "AED" | "USD")}
+                className="bg-transparent text-foreground text-xs tracking-wider rounded px-1 py-1 focus:outline-none hover:text-gold cursor-pointer"
+                data-testid="select-header-currency"
+                aria-label="Header currency selector"
+              >
+                <option value="AED" className="bg-black">AED</option>
+                <option value="USD" className="bg-black">USD</option>
+              </select>
+            </div>
             <button
               onClick={() => setIsCartOpen(true)}
               className="relative p-2 text-foreground/70 hover:text-gold transition-colors"
@@ -104,18 +119,33 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden fixed inset-0 top-20 bg-[#231f20] z-50 animate-fade-in">
           <div className="flex flex-col items-center justify-center h-full space-y-8">
-            <div className="flex items-center gap-2 text-sm">
-              <span className="uppercase tracking-[0.2em] text-white/70">Currency</span>
-              <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value as "AED" | "USD")}
-                className="bg-black/40 border border-gold/30 text-white rounded px-2 py-1"
-                data-testid="select-mobile-currency"
-                aria-label="Mobile currency selector"
-              >
-                <option value="AED">AED</option>
-                <option value="USD">USD</option>
-              </select>
+            <div className="flex items-center gap-6 text-sm mb-4">
+              <div className="flex items-center gap-2">
+                <Globe className="w-4 h-4 text-gold" />
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as "en" | "ar")}
+                  className="bg-black/40 border border-gold/30 text-white rounded px-2 py-1"
+                  data-testid="select-mobile-language"
+                  aria-label="Mobile language selector"
+                >
+                  <option value="en">English</option>
+                  <option value="ar">عربي</option>
+                </select>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="uppercase tracking-[0.2em] text-white/70">CUR</span>
+                <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value as "AED" | "USD")}
+                  className="bg-black/40 border border-gold/30 text-white rounded px-2 py-1"
+                  data-testid="select-mobile-currency"
+                  aria-label="Mobile currency selector"
+                >
+                  <option value="AED">AED</option>
+                  <option value="USD">USD</option>
+                </select>
+              </div>
             </div>
             {navLinks.map((link) => (
               <Link
