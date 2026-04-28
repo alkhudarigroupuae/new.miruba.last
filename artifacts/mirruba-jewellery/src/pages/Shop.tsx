@@ -2,6 +2,7 @@ import { useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import { type WcProduct, type WcCategory } from "@/data/products";
 import { useProducts, useCategories } from "@/hooks/useProducts";
+import { useLanguage } from "@/context/LanguageContext";
 
 function CategoryIcon({ slug }: { slug: string }) {
   const iconClass = "w-5 h-5";
@@ -59,6 +60,7 @@ function CategoryIcon({ slug }: { slug: string }) {
 }
 
 export default function Shop() {
+  const { t } = useLanguage();
   const { data: allProducts, isLoading: productsLoading } = useProducts();
   const { data: allCats, isLoading: catsLoading } = useCategories();
   const [activeCategory, setActiveCategory] = useState<string>("All");
@@ -91,7 +93,7 @@ export default function Shop() {
             Browse
           </p>
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl mb-4 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}>
-            Our Collection
+            {t("shopCollection")}
           </h1>
           <div className="w-16 h-[1px] bg-gold/60 mx-auto opacity-0 animate-gold-line" style={{ animationDelay: "0.6s", animationFillMode: "forwards" }} />
         </div>
@@ -146,8 +148,7 @@ export default function Shop() {
               <div className="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-6">
                 <div className="w-3 h-3 rounded-full bg-gold" />
               </div>
-              <p className="font-serif text-xl mb-2">No products found</p>
-              <p className="text-sm text-muted-foreground/70">Try selecting a different category.</p>
+              <p className="font-serif text-xl mb-2">{t("outOfStock")}</p>
             </div>
           )}
         </div>

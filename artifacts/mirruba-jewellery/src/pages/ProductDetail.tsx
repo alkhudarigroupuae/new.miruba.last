@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import { ArrowLeft, ShoppingBag, Heart, ChevronDown, ChevronUp } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 import { fetchProductBySlug, formatPrice, getProductImage, getProductCategory, stripHtml, type WcProduct } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useCurrency } from "@/context/CurrencyContext";
@@ -8,6 +9,7 @@ import { useStore } from "@/context/StoreContext";
 import { useToast } from "@/hooks/use-toast";
 
 export default function ProductDetail() {
+  const { t, dir } = useLanguage();
   const [, params] = useRoute("/product/:slug");
   const [product, setProduct] = useState<WcProduct | null>(null);
   const [loading, setLoading] = useState(true);
@@ -50,14 +52,14 @@ export default function ProductDetail() {
     return (
       <main className="pt-24 pb-16 min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="font-serif text-2xl mb-4">Product not found</h1>
+          <h1 className="font-serif text-2xl mb-4">{t("outOfStock")}</h1>
           <Link
             href="/shop"
             className="inline-flex items-center gap-2 text-gold hover:text-gold-dark transition-colors"
             data-testid="link-back-shop"
           >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Shop
+            <ArrowLeft className={`w-4 h-4 ${dir === 'rtl' ? 'rotate-180' : ''}`} />
+            {t("shopCollection")}
           </Link>
         </div>
       </main>
@@ -85,8 +87,8 @@ export default function ProductDetail() {
           style={{ animationDelay: "0.1s", animationFillMode: "forwards" }}
           data-testid="link-back-to-shop"
         >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Shop
+          <ArrowLeft className={`w-4 h-4 ${dir === 'rtl' ? 'rotate-180' : ''}`} />
+          {t("shopCollection")}
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
@@ -219,7 +221,7 @@ export default function ProductDetail() {
                 data-testid="button-add-to-cart"
               >
                 <ShoppingBag className="w-4 h-4" />
-                Add to Bag
+                {t("addToCart")}
               </button>
               <button
                 className="p-3.5 border border-border rounded hover:border-gold hover:text-gold transition-all duration-300 hover:shadow-[0_4px_20px_rgba(231,188,103,0.2)] active:scale-95"

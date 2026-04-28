@@ -3,9 +3,11 @@ import { Link } from "wouter";
 import { useCart } from "@/context/CartContext";
 import { useCurrency } from "@/context/CurrencyContext";
 import { useStore } from "@/context/StoreContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { formatPrice, getProductImage } from "@/data/products";
 
 export default function CartDrawer() {
+  const { t } = useLanguage();
   const { items, isCartOpen, setIsCartOpen, removeFromCart, updateQuantity, totalPrice } = useCart();
   const { currency } = useCurrency();
   const store = useStore();
@@ -21,7 +23,7 @@ export default function CartDrawer() {
       />
       <div className="fixed right-0 top-0 h-full w-full max-w-md bg-background z-50 shadow-2xl animate-slide-in-right flex flex-col">
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="font-serif text-xl tracking-wide">Shopping Bag</h2>
+          <h2 className="font-serif text-xl tracking-wide">{t("shoppingCart")}</h2>
           <button
             onClick={() => setIsCartOpen(false)}
             className="p-1 hover:text-gold transition-colors"
@@ -34,8 +36,7 @@ export default function CartDrawer() {
         <div className="flex-1 overflow-y-auto p-6">
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-              <p className="font-serif text-lg mb-2">Your bag is empty</p>
-              <p className="text-sm">Discover our beautiful collections</p>
+              <p className="font-serif text-lg mb-2">{t("yourCartIsEmpty")}</p>
             </div>
           ) : (
             <div className="space-y-6">
@@ -87,7 +88,7 @@ export default function CartDrawer() {
         {items.length > 0 && (
           <div className="p-6 border-t border-border space-y-4">
             <div className="flex items-center justify-between font-serif text-lg">
-              <span>Total</span>
+              <span>{t("total")}</span>
               <span className="text-gold">{formatPrice(totalPrice, currency, store.usdRate)}</span>
             </div>
             <Link
@@ -96,7 +97,7 @@ export default function CartDrawer() {
               className="block w-full bg-gold text-white text-center py-3 tracking-[0.15em] uppercase text-sm font-medium hover:bg-gold-dark transition-colors rounded"
               data-testid="link-checkout"
             >
-              Proceed to Checkout
+              {t("checkout")}
             </Link>
           </div>
         )}

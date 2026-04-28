@@ -3,8 +3,10 @@ import { Link } from "wouter";
 import { MapPin, Phone, Mail, Send, CheckCircle, Loader2 } from "lucide-react";
 import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
 import { useStore } from "@/context/StoreContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 function NewsletterSection() {
+  const { t, dir } = useLanguage();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
@@ -86,40 +88,41 @@ function NewsletterSection() {
 
 export default function Footer() {
   const store = useStore();
+  const { t, dir } = useLanguage();
 
   return (
     <>
     <NewsletterSection />
     <footer className="bg-[#231f20] text-foreground/90 pt-8 sm:pt-16 pb-6 sm:pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-12 mb-6 sm:mb-12 text-center md:text-left">
-          <div className="flex flex-col items-center md:items-start">
+        <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-12 mb-6 sm:mb-12 text-center md:text-${dir === 'rtl' ? 'right' : 'left'}`}>
+          <div className={`flex flex-col items-center md:items-${dir === 'rtl' ? 'start' : 'start'}`}>
             <img src={logoImg} alt={store.storeName} className="h-10 w-auto mb-4 brightness-150" />
             <p className="text-sm leading-relaxed text-foreground/90">
-              {store.tagline}. We are committed to providing a unique shopping experience with the perfect jewelry pieces that suit your style.
+              {t("aboutUsDesc")}
             </p>
           </div>
 
           <div>
-            <h4 className="font-serif text-lg tracking-wider mb-4 text-gold-light">Quick Links</h4>
+            <h4 className="font-serif text-lg tracking-wider mb-4 text-gold-light">{t("quickLinks")}</h4>
             <nav className="flex gap-4 justify-center md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-3 md:justify-items-start">
               <Link href="/" className="text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-home">
-                Home
+                {t("home")}
               </Link>
               <Link href="/shop" className="text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-shop">
-                Shop
+                {t("shop")}
               </Link>
               <Link href="/about" className="text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-about">
-                About
+                {t("about")}
               </Link>
               <Link href="/contact" className="text-sm text-foreground/80 hover:text-gold-light transition-colors" data-testid="link-footer-contact">
-                Contact
+                {t("contact")}
               </Link>
             </nav>
           </div>
 
           <div className="flex flex-col items-center md:items-start">
-            <h4 className="font-serif text-lg tracking-wider mb-4 text-gold-light hidden md:block">Contact</h4>
+            <h4 className="font-serif text-lg tracking-wider mb-4 text-gold-light hidden md:block">{t("contactInfo")}</h4>
             <div className="flex gap-6 md:hidden">
               <a href={`https://maps.google.com/?q=${encodeURIComponent(store.address)}`} target="_blank" rel="noopener noreferrer" className="w-11 h-11 rounded-full bg-gold/10 flex items-center justify-center text-gold-light hover:bg-gold/20 transition-colors">
                 <MapPin className="w-5 h-5" />
@@ -155,7 +158,7 @@ export default function Footer() {
       <div className="bg-[#231f20] mt-0 py-4 sm:py-5 border-t border-gold/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <p className="text-xs text-gold/90">
-            &copy; {new Date().getFullYear()} {store.storeName}. All rights reserved.
+            &copy; {new Date().getFullYear()} {store.storeName}. {t("allRightsReserved")}
           </p>
           <div className="flex items-center gap-6">
             <Link

@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import { type WcProduct, type WcCategory } from "@/data/products";
 import { useProducts, useCategories } from "@/hooks/useProducts";
+import { useLanguage } from "@/context/LanguageContext";
 import logoImg from "@assets/LogoAlaaEdited.df4b9638e3b8557a4379_(1)_1776081454867.png";
 import desktopBannerImg from "@assets/Untitled_design_(3)_1776088488510.jpg";
 import mobileBannerImg from "@assets/Untitled_design_(3)_1776088697980.jpg";
@@ -27,6 +28,7 @@ function useInView(threshold = 0.1) {
 }
 
 function HeroSection() {
+  const { t, dir } = useLanguage();
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden" data-testid="section-hero">
       <img
@@ -42,11 +44,11 @@ function HeroSection() {
 
       <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
         <p className="text-gold-light tracking-[0.32em] text-[10px] sm:text-xs uppercase mb-6 opacity-0 animate-fade-in" style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}>
-          Built on GitHub • Deployed on Vercel
+          {t("heroSubtitle")}
         </p>
         <img src={logoImg} alt="Mirruba" className="h-16 sm:h-24 md:h-28 w-auto mx-auto mb-6 opacity-0 animate-fade-in-up brightness-150" style={{ animationDelay: "0.5s", animationFillMode: "forwards" }} />
         <p className="text-white text-base sm:text-lg mb-10 max-w-xl mx-auto leading-relaxed opacity-0 animate-fade-in-up" style={{ animationDelay: "0.7s", animationFillMode: "forwards" }}>
-          We are committed to providing a unique shopping experience with the perfect jewelry pieces that suit your style and preferences.
+          {t("heroDescription")}
         </p>
         <Link
           href="/shop"
@@ -54,8 +56,8 @@ function HeroSection() {
           style={{ animationDelay: "0.9s", animationFillMode: "forwards" }}
           data-testid="link-shop-now"
         >
-          Shop Now
-          <ArrowRight className="w-4 h-4" />
+          {t("shopNow")}
+          <ArrowRight className={`w-4 h-4 ${dir === 'rtl' ? 'rotate-180' : ''}`} />
         </Link>
       </div>
 
@@ -67,6 +69,7 @@ function HeroSection() {
 }
 
 function FeaturedSection() {
+  const { t } = useLanguage();
   const { data: allProducts, isLoading: loading } = useProducts();
   const products = (allProducts || []).slice(0, 4);
   const { ref, isVisible } = useInView(0.1);
@@ -75,9 +78,9 @@ function FeaturedSection() {
     <section className="py-12 sm:py-24 bg-muted/30" data-testid="section-featured">
       <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`text-center mb-8 sm:mb-16 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-          <p className="text-gold tracking-[0.3em] text-xs uppercase mb-4">Our Collections</p>
+          <p className="text-gold tracking-[0.3em] text-xs uppercase mb-4">{t("ourCollections")}</p>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl mb-4">
-            Trending Products
+            {t("trendingProducts")}
           </h2>
         </div>
         {loading ? (
@@ -104,8 +107,8 @@ function FeaturedSection() {
             className="inline-flex items-center gap-2 text-gold hover:text-gold-dark transition-colors tracking-[0.15em] uppercase text-sm font-medium"
             data-testid="link-see-more"
           >
-            See More
-            <ArrowRight className="w-4 h-4" />
+            {t("exploreAll")}
+            <ArrowRight className={`w-4 h-4 ${useLanguage().dir === 'rtl' ? 'rotate-180' : ''}`} />
           </Link>
         </div>
       </div>
@@ -114,6 +117,7 @@ function FeaturedSection() {
 }
 
 function CategoryShowcase() {
+  const { t, dir } = useLanguage();
   const { ref, isVisible } = useInView(0.05);
   const { data: allCats, isLoading: loading } = useCategories();
   const categories = (allCats || []).filter((c) => c.slug !== "uncategorized");
@@ -124,8 +128,8 @@ function CategoryShowcase() {
     <section className="py-16 sm:py-24 bg-background" data-testid="section-categories">
       <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`text-center mb-10 sm:mb-16 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-          <p className="text-gold tracking-[0.3em] text-xs uppercase mb-4">Explore</p>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl mb-4">Shop By Category</h2>
+          <p className="text-gold tracking-[0.3em] text-xs uppercase mb-4">{t("ourCollections")}</p>
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl mb-4">{t("featuredCategories")}</h2>
         </div>
         {loading ? (
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -156,7 +160,7 @@ function CategoryShowcase() {
                 <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
                   <h3 className="font-serif text-lg sm:text-xl text-white mb-1">{cat.name}</h3>
                   <span className="text-gold-light text-xs tracking-[0.15em] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300 inline-flex items-center gap-1">
-                    Explore <ArrowRight className="w-3 h-3" />
+                    {t("exploreAll")} <ArrowRight className={`w-3 h-3 ${dir === 'rtl' ? 'rotate-180' : ''}`} />
                   </span>
                 </div>
               </Link>
@@ -169,6 +173,7 @@ function CategoryShowcase() {
 }
 
 function LuxuryBanner() {
+  const { t, dir } = useLanguage();
   const { ref, isVisible } = useInView(0.2);
 
   return (
@@ -176,21 +181,21 @@ function LuxuryBanner() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/10" />
       <div ref={ref} className="relative z-10 max-w-3xl mx-auto text-center px-4">
         <p className={`text-gold-light tracking-[0.4em] text-xs sm:text-sm uppercase mb-4 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
-          Timeless Elegance
+          {t("premiumQuality")}
         </p>
         <h2 className={`font-serif text-3xl sm:text-4xl lg:text-5xl mb-6 text-white transition-all duration-700 delay-200 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
-          Crafted With Passion,<br />Worn With Pride
+          {t("whyChooseUs")}
         </h2>
         <p className={`text-white/70 text-sm sm:text-base leading-relaxed mb-8 max-w-xl mx-auto transition-all duration-700 delay-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
-          Each Mirruba piece is meticulously handcrafted by master artisans, blending traditional techniques with contemporary design to create jewelry that tells your unique story.
+          {t("whyChooseUsDesc")}
         </p>
         <Link
           href="/shop"
           className={`inline-flex items-center gap-3 border border-gold text-gold px-8 py-3.5 tracking-[0.2em] uppercase text-sm font-medium hover:bg-gold hover:text-white transition-all duration-300 rounded ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
           style={{ transitionDelay: "400ms" }}
         >
-          Discover Collection
-          <ArrowRight className="w-4 h-4" />
+          {t("shopCollection")}
+          <ArrowRight className={`w-4 h-4 ${dir === 'rtl' ? 'rotate-180' : ''}`} />
         </Link>
       </div>
     </section>
@@ -198,6 +203,7 @@ function LuxuryBanner() {
 }
 
 function AboutPreview() {
+  const { t, dir } = useLanguage();
   const { ref, isVisible } = useInView(0.2);
   const { data: allProducts } = useProducts();
   const previewImage = (() => {
@@ -210,21 +216,20 @@ function AboutPreview() {
       <div ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div className={`transition-all duration-1000 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"}`}>
-            <p className="text-gold tracking-[0.3em] text-xs uppercase mb-4">Who We Are</p>
+            <p className="text-gold tracking-[0.3em] text-xs uppercase mb-4">{t("whoWeAre")}</p>
             <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl mb-5 leading-tight">
-              An Icon Of<br />Absolute Femininity
+              {t("aboutPreviewTitle").split(" ").slice(0, -1).join(" ")}<br />
+              {t("aboutPreviewTitle").split(" ").slice(-1)}
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-6 text-sm sm:text-base">
-              It reflects the life of a solid, independent woman of rare beauty.
-              An uncontrollable force awakens in you, enchants you, and takes you
-              to a world of irresistible femininity and attractiveness.
+              {t("aboutPreviewDesc")}
             </p>
             <Link
               href="/about"
               className="inline-flex items-center gap-2 text-gold hover:text-gold-dark transition-colors tracking-[0.15em] uppercase text-sm font-medium"
             >
-              Read More
-              <ArrowRight className="w-4 h-4" />
+              {t("readMore")}
+              <ArrowRight className={`w-4 h-4 ${dir === 'rtl' ? 'rotate-180' : ''}`} />
             </Link>
           </div>
           {previewImage && (

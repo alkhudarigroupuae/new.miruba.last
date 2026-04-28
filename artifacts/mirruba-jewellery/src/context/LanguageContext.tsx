@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { translations, TranslationKey } from "../lib/i18n";
 
 type Language = "en" | "ar";
 
@@ -6,6 +7,7 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   dir: "ltr" | "rtl";
+  t: (key: TranslationKey) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -22,6 +24,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   const dir = language === "ar" ? "rtl" : "ltr";
+  
+  const t = (key: TranslationKey): string => {
+    return translations[language][key] || key;
+  };
 
   useEffect(() => {
     document.documentElement.dir = dir;
@@ -38,7 +44,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }, [language, dir]);
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, dir }}>
+    <LanguageContext.Provider value={{ language, setLanguage, dir, t }}>
       {children}
     </LanguageContext.Provider>
   );
